@@ -98,7 +98,6 @@ export default function WalletPage() {
       }
 
       const publicKey = accessResult.address;
-      setWalletAddress(publicKey);
 
       // Call API to bind wallet
       const response = await fetch("/api/onboarding/wallet/bind", {
@@ -107,13 +106,26 @@ export default function WalletPage() {
         body: JSON.stringify({ walletAddress: publicKey }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to bind wallet");
+        // Handle specific error cases
+        if (response.status === 403 && data.error?.includes("KYC")) {
+          setError("Please complete KYC verification first before connecting your wallet.");
+        } else {
+          setError(data.error || "Failed to bind wallet");
+        }
+        setIsConnecting(false);
+        return;
       }
 
-      // Success - redirect to dashboard
-      router.push("/dashboard");
+      // Only show connected state after successful binding
+      setWalletAddress(publicKey);
+
+      // Success - redirect to dashboard after a brief delay to show success state
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
     } catch (err) {
       console.error("Wallet connection error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
