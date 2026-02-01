@@ -75,7 +75,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Check KYC status
-    if (user.kyc_status !== "verified") {
+    // For testnet, allow binding without verified KYC
+    const isTestnet = process.env.STELLAR_NETWORK === "testnet";
+    if (!isTestnet && user.kyc_status !== "verified") {
       return NextResponse.json(
         { error: "KYC verification required before wallet binding" },
         { status: 403 }
