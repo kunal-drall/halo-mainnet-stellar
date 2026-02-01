@@ -685,6 +685,102 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## Screenshots
+
+### Landing Page
+![Landing Page](docs/screenshots/landing.png)
+*Welcome page with project overview and sign-up options*
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+*Main dashboard showing credit score, active circles, and pending contributions*
+
+### Circles Overview
+![Circles](docs/screenshots/circles.png)
+*Browse all lending circles - active, forming, and completed*
+
+### Circle Detail
+![Circle Detail](docs/screenshots/circle-detail.png)
+*View circle members, contribution schedule, and payout history*
+
+### Create Circle
+![Create Circle](docs/screenshots/create-circle.png)
+*Create a new lending circle with custom parameters*
+
+### Credit Score
+![Credit Score](docs/screenshots/credit.png)
+*Detailed credit score breakdown with payment history and tier visualization*
+
+### Onboarding - Wallet Binding
+![Wallet Binding](docs/screenshots/wallet-bind.png)
+*Connect and bind your Stellar wallet via Freighter*
+
+> **Note:** Add screenshots to `docs/screenshots/` directory when the frontend is deployed.
+
+---
+
+## Deployed Links
+
+| Environment | URL |
+|-------------|-----|
+| **Production App** | [usehalo.fun](https://usehalo.fun) |
+| **Contract Explorer** | [Stellar Expert (Testnet)](https://stellar.expert/explorer/testnet) |
+| **Identity Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CBRQ7VYKMCNVBT5OGEQLDCNXUWE4OUWAP4BBIZ4MUHLVUD42JDQ5DWGY) |
+| **Circle Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CDNSZTY4IIJ7Y45FDVRHTTUKLIXNM7P53ZWX3FQ7GHKJ23LSLF4TTJ33) |
+| **Credit Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CCVZS2N5RBE5O6EBKQ2UW6M3EPGYU4VPTLDV3PMZEUX3PCHI4K42N6GH) |
+
+---
+
+## Future Scope
+
+### Phase 2: Enhanced Features
+- [ ] **Peer Attestations** - Allow circle members to vouch for each other's creditworthiness
+- [ ] **Multi-Token Support** - Accept multiple stablecoins (USDC, EURC, etc.)
+- [ ] **Mobile Application** - Native iOS and Android apps for on-the-go access
+- [ ] **Push Notifications** - Reminders for upcoming contributions and payouts
+- [ ] **Advanced Analytics** - Detailed insights into contribution patterns and circle health
+
+### Phase 3: DeFi Integrations
+- [ ] **Credit Score SDK** - Publish npm/cargo packages for third-party integrations
+- [ ] **DeFi Protocol Partnerships** - Integrate with Stellar lending protocols
+- [ ] **Collateral Optimization** - Enable reduced collateral requirements based on credit score
+- [ ] **Credit Score NFTs** - Portable, verifiable credit credentials as soul-bound tokens
+- [ ] **Cross-Protocol Reputation** - Share credit scores across multiple DeFi platforms
+
+### Phase 4: Scale & Expansion
+- [ ] **Mainnet Deployment** - Launch on Stellar Mainnet for production use
+- [ ] **Multi-Chain Support** - Expand to Ethereum L2s (Base, Arbitrum, Optimism)
+- [ ] **Fiat On/Off Ramps** - Direct bank account and mobile money integration
+- [ ] **Traditional Credit Bureau Integration** - Export on-chain scores to TransUnion, Experian
+- [ ] **Microfinance Partnerships** - Partner with MFIs in emerging markets
+- [ ] **Governance Token** - Launch $HALO token for community governance
+
+### Long-Term Vision
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           HALO PROTOCOL ROADMAP                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  Q1 2026        Q2 2026        Q3 2026        Q4 2026        2027+      │
+│     │              │              │              │              │        │
+│     ▼              ▼              ▼              ▼              ▼        │
+│  ┌──────┐      ┌──────┐      ┌──────┐      ┌──────┐      ┌──────┐      │
+│  │ MVP  │─────▶│Mobile│─────▶│ DeFi │─────▶│Mainnet──────▶│Global│      │
+│  │Launch│      │ App  │      │ SDK  │      │Launch│      │Scale │      │
+│  └──────┘      └──────┘      └──────┘      └──────┘      └──────┘      │
+│                                                                          │
+│  • Testnet      • iOS/Android  • Credit SDK   • Production   • 1M+ users│
+│  • Core         • Push notif   • Protocol     • Multi-chain  • MFI      │
+│    features     • Peer vouch     integrations • Fiat ramps     partners │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Our Mission:** Enable 100 million unbanked individuals to build portable credit history through trusted community participation, unlocking access to the formal financial system.
+
+---
+
 ## Links
 
 - **Website:** [usehalo.fun](https://usehalo.fun)
