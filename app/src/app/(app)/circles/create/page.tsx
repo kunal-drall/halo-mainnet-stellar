@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signTransaction } from "@stellar/freighter-api";
 
 interface FormData {
   name: string;
@@ -17,6 +18,7 @@ interface CreateResult {
   circle: { id: string; name: string };
   inviteCode: string;
   inviteLink: string;
+  onChainTxHash?: string;
 }
 
 export default function CreateCirclePage() {
@@ -108,6 +110,7 @@ export default function CreateCirclePage() {
     setError(null);
 
     try {
+      // Step 1: Create circle in database and get transaction XDR
       const response = await fetch("/api/circles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -125,10 +128,40 @@ export default function CreateCirclePage() {
       }
 
       const data = await response.json();
+      let onChainTxHash: string | undefined;
+
+      // Step 2: If we got a transaction XDR, prompt user to sign it
+      if (data.transactionXdr) {
+        try {
+          // Sign the transaction with Freighter
+          const signResult = await signTransaction(data.transactionXdr, {
+            networkPassphrase: "Test SDF Network ; September 2015",
+          });
+
+          if (signResult.signedTxXdr) {
+            // Submit the signed transaction to Stellar
+            const submitResponse = await fetch("/api/stellar/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ signedXdr: signResult.signedTxXdr }),
+            });
+
+            if (submitResponse.ok) {
+              const submitData = await submitResponse.json();
+              onChainTxHash = submitData.hash;
+            }
+          }
+        } catch (signError) {
+          // User rejected or Freighter error - circle is still created in DB
+          console.log("Transaction signing skipped:", signError);
+        }
+      }
+
       setCreateResult({
         circle: data.circle,
         inviteCode: data.inviteCode,
         inviteLink: data.inviteLink || `${window.location.origin}/circles/join/${data.inviteCode}`,
+        onChainTxHash,
       });
       setStep(4); // Success step
     } catch (err) {
