@@ -346,7 +346,7 @@ ScoreUpdated { unique_id: BytesN<32>, old_score: u32, new_score: u32 }
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/halo-mainnet-stellar.git
+   git clone https://github.com/kunal-drall/halo-mainnet-stellar.git
    cd halo-mainnet-stellar
    ```
 
@@ -783,10 +783,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Links
 
-- **Website:** [usehalo.fun](https://usehalo.fun)
+- **Website:** [usehalo.fun](https://tryhalo.fun)
 - **Twitter:** [@halodotfun](https://twitter.com/halodotfun)
 - **Telegram:** [t.me/kunaldrall](https://t.me/kunaldrall)
-- **GitHub:** [github.com/kunal-drall/halo](https://github.com/kunal-drall/halo)
+- **GitHub:** [github.com/kunal-drall/halo](https://github.com/kunal-drall/halo-mainnet-stellar)
 
 ---
 
