@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  isConnected,
+  isAllowed,
+  requestAccess,
+  getAddress,
+} from "@stellar/freighter-api";
 
 export default function WalletPage() {
   const router = useRouter();
@@ -11,21 +17,53 @@ export default function WalletPage() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [freighterAvailable, setFreighterAvailable] = useState<boolean | null>(null);
+  const [isCheckingFreighter, setIsCheckingFreighter] = useState(true);
 
-  // Check for Freighter availability on mount with retry logic
+  // Check for Freighter availability using the official API
   useEffect(() => {
     const checkFreighter = async () => {
-      // Try up to 10 times with increasing delays
-      for (let i = 0; i < 10; i++) {
-        if (typeof window !== "undefined" && (window as any).freighter) {
+      setIsCheckingFreighter(true);
+
+      try {
+        // Use the official Freighter API to check connection
+        // This method properly handles extension detection in all environments
+        const connectedResult = await isConnected();
+
+        if (connectedResult.isConnected) {
           setFreighterAvailable(true);
-          return;
+
+          // Check if already allowed and get address
+          const allowedResult = await isAllowed();
+          if (allowedResult.isAllowed) {
+            try {
+              const addressResult = await getAddress();
+              if (addressResult.address) {
+                setWalletAddress(addressResult.address);
+              }
+            } catch {
+              // Not connected yet, that's fine
+            }
+          }
+        } else {
+          // If not connected on first check, try a few more times
+          // Extension might still be loading
+          for (let i = 0; i < 5; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            const retryResult = await isConnected();
+            if (retryResult.isConnected) {
+              setFreighterAvailable(true);
+              setIsCheckingFreighter(false);
+              return;
+            }
+          }
+          setFreighterAvailable(false);
         }
-        // Wait with increasing delay: 200ms, 400ms, 600ms, etc.
-        await new Promise((resolve) => setTimeout(resolve, 200 * (i + 1)));
+      } catch (err) {
+        console.error("Error checking Freighter:", err);
+        setFreighterAvailable(false);
+      } finally {
+        setIsCheckingFreighter(false);
       }
-      // After all retries, Freighter is not available
-      setFreighterAvailable(false);
     };
 
     checkFreighter();
@@ -36,26 +74,30 @@ export default function WalletPage() {
     setError(null);
 
     try {
-      // Double-check Freighter availability with one more attempt
-      if (typeof window === "undefined" || !(window as any).freighter) {
-        // Try one more time with a short delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        if (!(window as any).freighter) {
-          setError("Freighter wallet not found. Please install the Freighter extension and refresh the page.");
-          setIsConnecting(false);
-          return;
-        }
+      // Verify Freighter is available
+      const connectedResult = await isConnected();
+      if (!connectedResult.isConnected) {
+        setError("Freighter wallet not found. Please install the Freighter extension and refresh the page.");
+        setIsConnecting(false);
+        return;
       }
 
-      // Request public key from Freighter
-      const publicKey = await (window as any).freighter?.getPublicKey();
+      // Request access to the wallet - this also returns the address
+      const accessResult = await requestAccess();
 
-      if (!publicKey) {
+      if (accessResult.error) {
+        setError(`Access denied: ${accessResult.error}`);
+        setIsConnecting(false);
+        return;
+      }
+
+      if (!accessResult.address) {
         setError("Failed to get wallet address. Please try again.");
         setIsConnecting(false);
         return;
       }
 
+      const publicKey = accessResult.address;
       setWalletAddress(publicKey);
 
       // Call API to bind wallet
@@ -73,6 +115,7 @@ export default function WalletPage() {
       // Success - redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
+      console.error("Wallet connection error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsConnecting(false);
@@ -83,6 +126,8 @@ export default function WalletPage() {
     // For testnet, allow skipping wallet binding
     router.push("/dashboard");
   };
+
+  const isLoading = isCheckingFreighter || freighterAvailable === null;
 
   return (
     <div className="space-y-6">
@@ -161,7 +206,7 @@ export default function WalletPage() {
                 </div>
               )}
 
-              {freighterAvailable === false && !error && (
+              {!isLoading && freighterAvailable === false && !error && (
                 <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                   <p className="text-sm text-blue-400">
                     Freighter wallet not detected. Please install the extension and refresh.
@@ -179,15 +224,15 @@ export default function WalletPage() {
 
               <Button
                 onClick={connectFreighter}
-                loading={isConnecting || freighterAvailable === null}
-                disabled={freighterAvailable === false}
+                loading={isConnecting || isLoading}
+                disabled={!isLoading && freighterAvailable === false}
                 className="w-full"
                 size="lg"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
                 </svg>
-                {freighterAvailable === null
+                {isLoading
                   ? "Detecting Wallet..."
                   : freighterAvailable
                   ? "Connect Freighter Wallet"
