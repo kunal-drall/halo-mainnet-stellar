@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+/* ===========================================
+   Halo Protocol Design System
+   =========================================== */
+
+:root {
+  /* Color Palette - Monochrome Dark Theme */
+  --color-midnight: #0B0F1A;
+  --color-navy: #111827;
+  --color-soft-white: #E5E7EB;
+  --color-neutral: #9CA3AF;
+  --color-white: #FFFFFF;
+
+  /* Semantic Colors */
+  --background: var(--color-midnight);
+  --foreground: var(--color-soft-white);
+  --card: var(--color-navy);
+  --card-foreground: var(--color-soft-white);
+  --muted: var(--color-neutral);
+  --muted-foreground: var(--color-neutral);
+  --border: rgba(255, 255, 255, 0.1);
+  --input: var(--color-navy);
+  --ring: var(--color-white);
+
+  /* Credit Score Tier Colors */
+  --score-building: #EF4444;
+  --score-fair: #F97316;
+  --score-good: #EAB308;
+  --score-excellent: #22C55E;
+
+  /* Status Colors */
+  --status-pending: #F59E0B;
+  --status-active: #22C55E;
+  --status-completed: #6366F1;
+  --status-missed: #EF4444;
+  --status-forming: #F59E0B;
+
+  /* Radius */
+  --radius-xl: 12px;
+  --radius-lg: 8px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
+}
+
+@theme inline {
+  /* Tailwind v4 Theme Configuration */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  /* Typography */
+  --font-sans: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), var(--font-geist-mono), monospace;
+}
+
+/* ===========================================
+   Base Styles
+   =========================================== */
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===========================================
+   Grid Pattern Overlay (Optional)
+   =========================================== */
+
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ===========================================
+   Glassmorphism Card Style
+   =========================================== */
+
+.glass-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+}
+
+/* ===========================================
+   Glow Effects
+   =========================================== */
+
+.glow-white {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.glow-subtle {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===========================================
+   Button Base Styles
+   =========================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-xl);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 150ms ease-out;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-white);
+  color: var(--color-midnight);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #E5E7EB;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-white);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-neutral);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--color-white);
+}
+
+/* ===========================================
+   Input Styles
+   =========================================== */
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-navy);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  color: var(--color-soft-white);
+  font-size: 0.875rem;
+  transition: border-color 150ms ease-out;
+}
+
+.input::placeholder {
+  color: var(--color-neutral);
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===========================================
+   Scrollbar Styles
+   =========================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-midnight);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-navy);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===========================================
+   Animations
+   =========================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ===========================================
+   Credit Score Gauge Styles
+   =========================================== */
+
+.credit-gauge {
+  position: relative;
+}
+
+.credit-gauge-circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.credit-gauge-progress {
+  transition: stroke-dasharray 1s ease-out;
+}
+
+/* ===========================================
+   Utility Classes
+   =========================================== */
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-neutral) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-navy), var(--color-navy)) padding-box,
+    linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)) border-box;
+}
