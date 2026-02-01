@@ -1,0 +1,13 @@
+# Screenshots Directory
+
+Add the following screenshots here:
+
+1. `landing.png` - Landing page with project overview
+2. `dashboard.png` - Main dashboard with credit score and stats
+3. `circles.png` - Circles list/overview page
+4. `circle-detail.png` - Individual circle detail view
+5. `create-circle.png` - Create new circle form
+6. `credit.png` - Credit score breakdown page
+7. `wallet-bind.png` - Wallet connection/binding screen
+
+Recommended dimensions: 1200x800px or similar widescreen aspect ratio
