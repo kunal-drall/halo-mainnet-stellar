@@ -48,13 +48,13 @@ export async function GET(
     const { id } = await params;
     const supabase = createAdminClient();
 
-    // Get circle with creator info
+    // Get circle with organizer info
     const { data: circleData, error: circleError } = await supabase
       .from("circles")
       .select(
         `
         *,
-        creator:users!circles_creator_id_fkey(id, name, email)
+        creator:users!circles_organizer_id_fkey(id, name, email)
       `
       )
       .eq("id", id)
@@ -109,8 +109,29 @@ export async function GET(
       .eq("circle_id", id)
       .order("period_number", { ascending: true });
 
+    // Transform circle data to match frontend interface
+    const transformedCircle = {
+      id: circle.id,
+      name: circle.name,
+      description: null,
+      contribution_amount: circle.contribution_amount,
+      total_members: circle.member_count,
+      current_members: memberships.length,
+      status: circle.status,
+      current_period: circle.current_period,
+      current_period_end: circle.started_at
+        ? new Date(
+            new Date(circle.started_at).getTime() +
+              (circle.current_period || 1) * 30 * 24 * 60 * 60 * 1000
+          ).toISOString()
+        : null,
+      grace_period_hours: 168, // 7 days
+      invite_code: circle.invite_code,
+      creator: circle.creator,
+    };
+
     return NextResponse.json({
-      circle,
+      circle: transformedCircle,
       memberships,
       contributions: contributions || [],
       payouts: payouts || [],
