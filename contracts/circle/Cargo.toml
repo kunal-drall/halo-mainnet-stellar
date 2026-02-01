@@ -1,0 +1,20 @@
+[package]
+name = "halo-circle"
+version = "0.1.0"
+edition = "2021"
+description = "Halo Protocol Circle Contract - Lending circle management"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+soroban-token-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
+
+[features]
+testutils = ["soroban-sdk/testutils"]
