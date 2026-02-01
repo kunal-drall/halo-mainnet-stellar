@@ -18,6 +18,8 @@ export default function WalletPage() {
   const [error, setError] = useState<string | null>(null);
   const [freighterAvailable, setFreighterAvailable] = useState<boolean | null>(null);
   const [isCheckingFreighter, setIsCheckingFreighter] = useState(true);
+  const [bindingSuccess, setBindingSuccess] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Check for Freighter availability using the official API
   useEffect(() => {
@@ -26,27 +28,12 @@ export default function WalletPage() {
 
       try {
         // Use the official Freighter API to check connection
-        // This method properly handles extension detection in all environments
         const connectedResult = await isConnected();
 
         if (connectedResult.isConnected) {
           setFreighterAvailable(true);
-
-          // Check if already allowed and get address
-          const allowedResult = await isAllowed();
-          if (allowedResult.isAllowed) {
-            try {
-              const addressResult = await getAddress();
-              if (addressResult.address) {
-                setWalletAddress(addressResult.address);
-              }
-            } catch {
-              // Not connected yet, that's fine
-            }
-          }
         } else {
           // If not connected on first check, try a few more times
-          // Extension might still be loading
           for (let i = 0; i < 5; i++) {
             await new Promise((resolve) => setTimeout(resolve, 500));
             const retryResult = await isConnected();
@@ -119,24 +106,31 @@ export default function WalletPage() {
         return;
       }
 
-      // Only show connected state after successful binding
+      // Success - wallet is now bound
       setWalletAddress(publicKey);
+      setBindingSuccess(true);
+      setIsConnecting(false);
 
-      // Success - redirect to dashboard after a brief delay to show success state
+      // Auto-redirect after showing success
+      setIsRedirecting(true);
       setTimeout(() => {
-        router.push("/dashboard");
-      }, 1000);
+        window.location.href = "/dashboard";
+      }, 1500);
     } catch (err) {
       console.error("Wallet connection error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
       setIsConnecting(false);
     }
   };
 
+  const goToDashboard = () => {
+    setIsRedirecting(true);
+    window.location.href = "/dashboard";
+  };
+
   const skipForNow = () => {
     // For testnet, allow skipping wallet binding
-    router.push("/dashboard");
+    window.location.href = "/dashboard";
   };
 
   const isLoading = isCheckingFreighter || freighterAvailable === null;
@@ -155,8 +149,16 @@ export default function WalletPage() {
         </div>
         <div className="flex-1 h-px bg-white/20" />
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center text-sm font-medium">
-            2
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            bindingSuccess ? "bg-green-500 text-white" : "bg-white text-black"
+          }`}>
+            {bindingSuccess ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              "2"
+            )}
           </div>
           <span className="text-sm text-white">Connect Wallet</span>
         </div>
@@ -171,20 +173,31 @@ export default function WalletPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {walletAddress ? (
-            <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="text-sm font-medium text-green-400">Wallet Connected</p>
-                  <p className="text-xs text-neutral-400 font-mono mt-1">
-                    {walletAddress.slice(0, 8)}...{walletAddress.slice(-8)}
-                  </p>
+          {bindingSuccess && walletAddress ? (
+            <>
+              <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                <div className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-green-400">Wallet Successfully Bound!</p>
+                    <p className="text-xs text-neutral-400 font-mono mt-1">
+                      {walletAddress.slice(0, 8)}...{walletAddress.slice(-8)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <Button
+                onClick={goToDashboard}
+                loading={isRedirecting}
+                className="w-full"
+                size="lg"
+              >
+                {isRedirecting ? "Redirecting..." : "Continue to Dashboard"}
+              </Button>
+            </>
           ) : (
             <>
               <div className="space-y-3">
@@ -250,30 +263,30 @@ export default function WalletPage() {
                   ? "Connect Freighter Wallet"
                   : "Freighter Not Detected"}
               </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/10" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[#111827] px-2 text-neutral-500">or</span>
+                </div>
+              </div>
+
+              <Button
+                variant="ghost"
+                onClick={skipForNow}
+                className="w-full"
+              >
+                Skip for now (Testnet only)
+              </Button>
+
+              <p className="text-xs text-center text-neutral-500">
+                You can connect your wallet later from settings, but you won't be able
+                to participate in circles until you do.
+              </p>
             </>
           )}
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#111827] px-2 text-neutral-500">or</span>
-            </div>
-          </div>
-
-          <Button
-            variant="ghost"
-            onClick={skipForNow}
-            className="w-full"
-          >
-            Skip for now (Testnet only)
-          </Button>
-
-          <p className="text-xs text-center text-neutral-500">
-            You can connect your wallet later from settings, but you won't be able
-            to participate in circles until you do.
-          </p>
         </CardContent>
       </Card>
     </div>
