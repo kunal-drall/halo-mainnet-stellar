@@ -19,9 +19,18 @@ export default async function DashboardPage() {
   let tier = "building";
   let activeCircles = 0;
   let pendingActions = 0;
-  const hasWallet = !!session?.user?.walletAddress;
+  let hasWallet = false;
 
   if (session?.user?.id) {
+    // Get user's wallet status from database (not session, which may be stale)
+    const { data: userData } = await supabase
+      .from("users")
+      .select("wallet_address")
+      .eq("id", session.user.id)
+      .single();
+
+    hasWallet = !!(userData as any)?.wallet_address;
+
     // Get credit score
     const { data: creditData } = await supabase
       .from("credit_scores")
