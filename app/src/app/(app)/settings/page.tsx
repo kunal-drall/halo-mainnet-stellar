@@ -62,7 +62,7 @@ export default function SettingsPage() {
       case "processing":
         return "active";
       case "rejected":
-        return "destructive";
+        return "error";
       default:
         return "default";
     }

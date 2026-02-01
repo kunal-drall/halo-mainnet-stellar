@@ -9,6 +9,17 @@ import {
   u32ToScVal,
   u64ToScVal,
   symbolToScVal,
+  simulateContractCall,
+  scValToBool,
+  scValToU32,
+  scValToU64,
+  scValToI128,
+  scValToBytes,
+  scValToAddress,
+  scValToSymbol,
+  scValToMap,
+  scValToVec,
+  scValIsNone,
 } from "../client";
 
 /**
@@ -225,30 +236,198 @@ export class CircleContract {
   }
 
   /**
-   * Get circle state from contract
+   * Get circle state from contract.
+   * Calls the contract's `get_circle` function which returns Option<CircleState>.
+   * @param circleId - The 32-byte circle ID
+   * @returns The circle state, or null if not found
    */
   async getCircleState(circleId: Buffer): Promise<CircleState | null> {
-    // This would read contract data using Soroban RPC
-    // Implementation would use server.getContractData()
-    return null;
+    try {
+      const result = await simulateContractCall(
+        this.contractId,
+        "get_circle",
+        [bytesToScVal(circleId)]
+      );
+
+      if (result && !scValIsNone(result)) {
+        return this.parseCircleState(result);
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error getting circle state:", error);
+      return null;
+    }
   }
 
   /**
-   * Check if an address is a member of a circle
+   * Get circle by invite code.
+   * Calls the contract's `get_circle_by_invite` function.
+   * @param inviteCode - The 16-byte invite code
+   * @returns The circle state, or null if not found
+   */
+  async getCircleByInvite(inviteCode: Buffer): Promise<CircleState | null> {
+    try {
+      const result = await simulateContractCall(
+        this.contractId,
+        "get_circle_by_invite",
+        [bytesToScVal(inviteCode)]
+      );
+
+      if (result && !scValIsNone(result)) {
+        return this.parseCircleState(result);
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error getting circle by invite:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if an address is a member of a circle.
+   * Calls the contract's `is_member` function which returns bool.
+   * @param circleId - The 32-byte circle ID
+   * @param address - The wallet address to check
+   * @returns True if the address is a member
    */
   async isMember(circleId: Buffer, address: string): Promise<boolean> {
-    // This would read contract data
-    return false;
+    try {
+      const result = await simulateContractCall(
+        this.contractId,
+        "is_member",
+        [bytesToScVal(circleId), addressToScVal(address)]
+      );
+
+      if (result) {
+        return scValToBool(result);
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error checking membership:", error);
+      return false;
+    }
   }
 
   /**
-   * Get contribution status for current round
+   * Get contribution status for current round.
+   * Calls the contract's `get_contribution_status` function which returns (u32, u32).
+   * @param circleId - The 32-byte circle ID
+   * @returns Object with contributed and total member counts
    */
   async getContributionStatus(
     circleId: Buffer
   ): Promise<{ contributed: number; total: number }> {
-    // This would read contract data
-    return { contributed: 0, total: 0 };
+    try {
+      const result = await simulateContractCall(
+        this.contractId,
+        "get_contribution_status",
+        [bytesToScVal(circleId)]
+      );
+
+      if (result) {
+        // The result is a tuple (u32, u32) returned as a Vec
+        const vec = scValToVec(result);
+        if (vec.length >= 2) {
+          return {
+            contributed: scValToU32(vec[0]),
+            total: scValToU32(vec[1]),
+          };
+        }
+      }
+
+      return { contributed: 0, total: 0 };
+    } catch (error) {
+      console.error("Error getting contribution status:", error);
+      return { contributed: 0, total: 0 };
+    }
+  }
+
+  /**
+   * Get total circle count.
+   * Calls the contract's `get_circle_count` function which returns u64.
+   * @returns The total number of circles created
+   */
+  async getCircleCount(): Promise<number> {
+    try {
+      const result = await simulateContractCall(
+        this.contractId,
+        "get_circle_count",
+        []
+      );
+
+      if (result) {
+        return Number(scValToU64(result));
+      }
+
+      return 0;
+    } catch (error) {
+      console.error("Error getting circle count:", error);
+      return 0;
+    }
+  }
+
+  /**
+   * Parse CircleState struct from ScVal.
+   * Maps the contract's CircleState struct to the TypeScript interface.
+   */
+  private parseCircleState(scVal: xdr.ScVal): CircleState | null {
+    try {
+      const map = scValToMap(scVal);
+      if (map.size === 0) return null;
+
+      // Parse the nested config
+      const configVal = map.get("config");
+      const configMap = configVal ? scValToMap(configVal) : new Map();
+
+      // Parse members list
+      const membersVal = map.get("members");
+      const membersVec = membersVal ? scValToVec(membersVal) : [];
+      const members = membersVec.map((m) => scValToAddress(m) || "").filter((m) => m !== "");
+
+      // Parse status enum
+      const statusVal = map.get("status");
+      let status: "forming" | "active" | "completed" | "cancelled" = "forming";
+      if (statusVal) {
+        // Soroban enums are typically represented as a map with a single key
+        const statusMap = scValToMap(statusVal);
+        const statusKey = Array.from(statusMap.keys())[0] || "";
+        if (statusKey.toLowerCase() === "active") status = "active";
+        else if (statusKey.toLowerCase() === "completed") status = "completed";
+        else if (statusKey.toLowerCase() === "cancelled") status = "cancelled";
+        // Also check if it's a symbol directly
+        if (statusVal.switch().name === "scvSymbol") {
+          const sym = scValToSymbol(statusVal).toLowerCase();
+          if (sym === "active") status = "active";
+          else if (sym === "completed") status = "completed";
+          else if (sym === "cancelled") status = "cancelled";
+        }
+      }
+
+      return {
+        id: scValToBytes(map.get("id")!),
+        name: configMap.has("name") ? scValToSymbol(configMap.get("name")!) : "",
+        status,
+        members,
+        currentRound: scValToU32(map.get("current_round")!),
+        contributionAmount: configMap.has("contribution_amount")
+          ? scValToI128(configMap.get("contribution_amount")!)
+          : BigInt(0),
+        totalMembers: configMap.has("total_members")
+          ? scValToU32(configMap.get("total_members")!)
+          : 0,
+        createdAt: Number(scValToU64(map.get("created_at")!)),
+        startedAt: Number(scValToU64(map.get("started_at")!)),
+        totalContributed: scValToI128(map.get("total_contributed")!),
+        totalPaidOut: scValToI128(map.get("total_paid_out")!),
+        inviteCode: scValToBytes(map.get("invite_code")!),
+      };
+    } catch (error) {
+      console.error("Error parsing circle state:", error);
+      return null;
+    }
   }
 }
 
