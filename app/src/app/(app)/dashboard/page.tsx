@@ -10,6 +10,10 @@ export const metadata = {
   title: "Dashboard - Halo Protocol",
 };
 
+// Disable caching to always fetch fresh data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   const supabase = createAdminClient();
