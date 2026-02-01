@@ -1,0 +1,30 @@
+# Deployment secrets - DO NOT COMMIT
+DEPLOYMENT_SECRETS.md
+
+# Deployment outputs
+.deployments/
+
+# Build artifacts
+contracts/target/
+
+# Test snapshots
+contracts/*/test_snapshots/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Rust
+**/*.rs.bk
+Cargo.lock
+
+# Environment
+.env
+.env.local
+*.secret
