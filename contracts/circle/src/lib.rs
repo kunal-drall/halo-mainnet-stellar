@@ -23,6 +23,22 @@ use soroban_sdk::{
     Env, Symbol, Vec,
 };
 
+// Cross-contract client imports
+// These are generated from the Identity and Credit contract WASM files
+#[cfg(feature = "cross-contract")]
+mod identity_client {
+    soroban_sdk::contractimport!(
+        file = "../target/wasm32-unknown-unknown/release/halo_identity.wasm"
+    );
+}
+
+#[cfg(feature = "cross-contract")]
+mod credit_client {
+    soroban_sdk::contractimport!(
+        file = "../target/wasm32-unknown-unknown/release/halo_credit.wasm"
+    );
+}
+
 /// Storage keys for the contract
 #[derive(Clone)]
 #[contracttype]
@@ -734,32 +750,67 @@ impl HaloCircle {
     }
 
     fn verify_identity(env: &Env, address: &Address) -> Result<(), CircleError> {
-        // In a full implementation, this would call the Identity contract
-        // For now, we'll skip this check to allow testing without Identity contract
-        // let identity_contract: Address = env.storage().instance()
-        //     .get(&DataKey::IdentityContract)
-        //     .ok_or(CircleError::NotInitialized)?;
-        // Call identity contract to check if bound
+        #[cfg(feature = "cross-contract")]
+        {
+            // Get the Identity contract address
+            let identity_contract: Address = env
+                .storage()
+                .instance()
+                .get(&DataKey::IdentityContract)
+                .ok_or(CircleError::NotInitialized)?;
+
+            // Create client for Identity contract
+            let client = identity_client::Client::new(env, &identity_contract);
+
+            // Check if wallet is bound to an identity
+            if !client.is_bound(address) {
+                return Err(CircleError::IdentityNotBound);
+            }
+        }
+
+        // When cross-contract feature is disabled, skip verification for testing
+        #[cfg(not(feature = "cross-contract"))]
+        let _ = (env, address);
+
         Ok(())
     }
 
     fn get_unique_id(env: &Env, address: &Address) -> Result<BytesN<32>, CircleError> {
-        // In a full implementation, this would call the Identity contract
-        // For now, generate a deterministic ID from the address by hashing it
-        // Use a fixed-size approach: hash the address contract/account type byte + sequence
-        let mut data = Bytes::new(env);
-        // Add a domain separator
-        data.push_back(b'H');
-        data.push_back(b'A');
-        data.push_back(b'L');
-        data.push_back(b'O');
-        // Add ledger sequence for uniqueness
-        let seq = env.ledger().sequence();
-        for byte in seq.to_be_bytes() {
-            data.push_back(byte);
+        #[cfg(feature = "cross-contract")]
+        {
+            // Get the Identity contract address
+            let identity_contract: Address = env
+                .storage()
+                .instance()
+                .get(&DataKey::IdentityContract)
+                .ok_or(CircleError::NotInitialized)?;
+
+            // Create client for Identity contract
+            let client = identity_client::Client::new(env, &identity_contract);
+
+            // Get unique ID from Identity contract
+            // The cross-contract call will panic if the wallet is not bound
+            // So we return Ok() with the result directly
+            return Ok(client.get_id(address));
         }
-        let hash = env.crypto().sha256(&data);
-        Ok(BytesN::from_array(env, &hash.to_array()))
+
+        // When cross-contract feature is disabled, generate a deterministic ID for testing
+        #[cfg(not(feature = "cross-contract"))]
+        {
+            let mut data = Bytes::new(env);
+            // Add a domain separator
+            data.push_back(b'H');
+            data.push_back(b'A');
+            data.push_back(b'L');
+            data.push_back(b'O');
+            // Add ledger sequence for uniqueness
+            let seq = env.ledger().sequence();
+            for byte in seq.to_be_bytes() {
+                data.push_back(byte);
+            }
+            let hash = env.crypto().sha256(&data);
+            Ok(BytesN::from_array(env, &hash.to_array()))
+        }
     }
 
     fn generate_circle_id(env: &Env, _creator: &Address, count: u64) -> BytesN<32> {
@@ -907,10 +958,33 @@ impl HaloCircle {
         amount: i128,
         on_time: bool,
     ) {
-        // In a full implementation, this would call the Credit contract
-        // let credit_contract: Address = env.storage().instance()
-        //     .get(&DataKey::CreditContract).unwrap();
-        // Call credit_contract.record_payment(...)
+        #[cfg(feature = "cross-contract")]
+        {
+            // Get the Credit contract address
+            if let Some(credit_contract) = env
+                .storage()
+                .instance()
+                .get::<_, Address>(&DataKey::CreditContract)
+            {
+                // Create client for Credit contract
+                let client = credit_client::Client::new(env, &credit_contract);
+
+                // Record payment (Circle contract must be authorized in Credit contract)
+                // Ignore errors - payment recording is not critical for circle operation
+                let _ = client.record_payment(
+                    &env.current_contract_address(),
+                    unique_id,
+                    circle_id,
+                    &round,
+                    &amount,
+                    &on_time,
+                );
+            }
+        }
+
+        // When cross-contract feature is disabled, do nothing
+        #[cfg(not(feature = "cross-contract"))]
+        let _ = (env, unique_id, circle_id, round, amount, on_time);
     }
 
     fn finalize_circle(
@@ -918,17 +992,39 @@ impl HaloCircle {
         circle_id: &BytesN<32>,
         state: &CircleState,
     ) -> Result<(), CircleError> {
-        // Record circle completion for all members in Credit contract
-        for member in state.members.iter() {
-            if let Some(member_state) = env
+        #[cfg(feature = "cross-contract")]
+        {
+            // Get the Credit contract address
+            if let Some(credit_contract) = env
                 .storage()
-                .persistent()
-                .get::<_, MemberState>(&DataKey::Member(circle_id.clone(), member))
+                .instance()
+                .get::<_, Address>(&DataKey::CreditContract)
             {
-                // Call credit contract to record completion
-                // credit_contract.record_circle_completion(member_state.unique_id, circle_id, true);
+                // Create client for Credit contract
+                let client = credit_client::Client::new(env, &credit_contract);
+
+                // Record circle completion for all members
+                for member in state.members.iter() {
+                    if let Some(member_state) = env
+                        .storage()
+                        .persistent()
+                        .get::<_, MemberState>(&DataKey::Member(circle_id.clone(), member))
+                    {
+                        // Record successful completion (ignore errors)
+                        let _ = client.record_circle_completion(
+                            &env.current_contract_address(),
+                            &member_state.unique_id,
+                            circle_id,
+                            &true, // completed successfully
+                        );
+                    }
+                }
             }
         }
+
+        // When cross-contract feature is disabled, just emit event
+        #[cfg(not(feature = "cross-contract"))]
+        let _ = state.members.iter();
 
         env.events().publish(
             (Symbol::new(&env, "circle_completed"),),
