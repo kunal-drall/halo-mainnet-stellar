@@ -80,14 +80,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check onboarding completed
-    if (!session.user.onboardingCompleted) {
-      return NextResponse.json(
-        { error: "Please complete onboarding first" },
-        { status: 403 }
-      );
-    }
-
     // Parse and validate request body
     const body = await req.json();
     const validationResult = createCircleSchema.safeParse(body);
@@ -102,10 +94,10 @@ export async function POST(req: NextRequest) {
     const input = validationResult.data;
     const supabase = createAdminClient();
 
-    // Get user with wallet
+    // Get user with wallet (check from database, not stale session)
     const { data: userData, error: userError } = await supabase
       .from("users")
-      .select("id, wallet_address, unique_id")
+      .select("id, wallet_address, unique_id, onboarding_completed")
       .eq("id", session.user.id)
       .single();
 
@@ -115,8 +107,9 @@ export async function POST(req: NextRequest) {
 
     const user = userData as UserData;
 
+    // Check wallet is bound (required for circle creation)
     if (!user.wallet_address) {
-      return NextResponse.json({ error: "Wallet not bound" }, { status: 400 });
+      return NextResponse.json({ error: "Please connect your wallet first" }, { status: 400 });
     }
 
     // Check user doesn't have too many active circles

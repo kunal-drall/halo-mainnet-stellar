@@ -123,6 +123,7 @@ export async function POST(req: NextRequest) {
         wallet_address: walletAddress,
         unique_id: uniqueId,
         wallet_bound_at: new Date().toISOString(),
+        onboarding_completed: true,
       })
       .eq("id", session.user.id);
 
