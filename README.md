@@ -557,6 +557,24 @@ Content-Type: application/json
 | Public Key | `GDKUDGFWBHGHXVPWT7RCJANSC46XSBO2I5ZVJXOXUDVSC74KMIT7P4JZ` |
 | Key Alias | `halo-admin` |
 
+### Test User Wallets (SCF Verification)
+
+These wallets have been created and funded on Stellar Testnet for testing the Halo Protocol:
+
+| User | Wallet Address | Explorer |
+|------|----------------|----------|
+| Test User 1 | `GC3RA35EVMM5XAUKWDFFZK5PCX63D5PGIJ7T3VO2S5SIBNXRLKIU2LU2` | [View](https://stellar.expert/explorer/testnet/account/GC3RA35EVMM5XAUKWDFFZK5PCX63D5PGIJ7T3VO2S5SIBNXRLKIU2LU2) |
+| Test User 2 | `GBEAR66DQUXKVM26SYTPEJEDJQ3GWEOZVPGHXUENMH5C3CXYHSB7A5VJ` | [View](https://stellar.expert/explorer/testnet/account/GBEAR66DQUXKVM26SYTPEJEDJQ3GWEOZVPGHXUENMH5C3CXYHSB7A5VJ) |
+| Test User 3 | `GCISCF7WIKWAOIFL35OXZDG5PIWBES6HWDQN6BRYNAVSKHHZ7QO7VX64` | [View](https://stellar.expert/explorer/testnet/account/GCISCF7WIKWAOIFL35OXZDG5PIWBES6HWDQN6BRYNAVSKHHZ7QO7VX64) |
+| Test User 4 | `GAHVBABYJNDFBYE6HQBQLC34TGPBQNTNMIML32WAS7H2Y4VOQH3VSRBK` | [View](https://stellar.expert/explorer/testnet/account/GAHVBABYJNDFBYE6HQBQLC34TGPBQNTNMIML32WAS7H2Y4VOQH3VSRBK) |
+| Test User 5 | `GA75N4SUB43SEM434U5LZZX5TF7OSCJRMZONRFF5OQ3TO7F3ZWK4FWH6` | [View](https://stellar.expert/explorer/testnet/account/GA75N4SUB43SEM434U5LZZX5TF7OSCJRMZONRFF5OQ3TO7F3ZWK4FWH6) |
+
+### Demo Video
+
+📺 **[Watch the full demo walkthrough on Loom](https://www.loom.com/share/YOUR_VIDEO_ID)**
+
+*Video demonstrates: User signup → Wallet connection → Circle creation → Credit scoring*
+
 ### Getting Testnet Funds
 
 1. Visit the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=test)
