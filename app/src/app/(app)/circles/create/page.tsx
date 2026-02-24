@@ -448,6 +448,30 @@ export default function CreateCirclePage() {
                       {formData.memberCount} months
                     </div>
                   </div>
+                  <div>
+                    <div className="text-neutral-500">Escrow Required</div>
+                    <div className="text-white font-medium">
+                      ${formData.contributionAmount} USDC
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-neutral-500">Collateral</div>
+                    <div className="text-emerald-400 font-medium">
+                      100%
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Escrow Info */}
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-blue-400/80 text-xs">
+                    Each member deposits ${formData.contributionAmount} USDC as escrow (100% collateral) when joining. This protects all members and is returned after circle completion.
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -516,6 +540,17 @@ export default function CreateCirclePage() {
                       {new Date(formData.startDate).toLocaleDateString()}
                     </span>
                   </div>
+                  <div className="border-t border-white/10 pt-3 mt-3">
+                    <div className="flex justify-between">
+                      <span className="text-neutral-400">Escrow Deposit</span>
+                      <span className="text-emerald-400 font-medium">
+                        ${formData.contributionAmount} USDC
+                      </span>
+                    </div>
+                    <p className="text-neutral-500 text-xs mt-1">
+                      100% collateral - returned after circle completion
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -523,7 +558,7 @@ export default function CreateCirclePage() {
                 <p className="text-yellow-400 text-sm">
                   As the organizer, you will receive payout position #1. An
                   invite code will be generated for you to share with other
-                  members.
+                  members. Each member must deposit escrow when joining.
                 </p>
               </div>
             </CardContent>

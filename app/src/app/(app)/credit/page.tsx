@@ -336,6 +336,85 @@ export default function CreditPage() {
         </Card>
       </div>
 
+      {/* Score Breakdown */}
+      <Card variant="glass" className="p-6">
+        <CardHeader className="p-0 mb-6">
+          <CardTitle className="text-lg text-white">Score Breakdown</CardTitle>
+          <p className="text-neutral-400 text-sm mt-1">
+            Your score is calculated from 5 weighted components
+          </p>
+        </CardHeader>
+        <CardContent className="p-0 space-y-4">
+          {[
+            { name: "Payment History", weight: 40, maxPts: 220, description: "On-time payment track record", color: "bg-emerald-400" },
+            { name: "Circle Completion", weight: 25, maxPts: 137, description: "Successfully completed circles", color: "bg-blue-400" },
+            { name: "Volume", weight: 15, maxPts: 83, description: "Total contribution volume (log scale)", color: "bg-purple-400" },
+            { name: "Tenure", weight: 10, maxPts: 55, description: "Time active on the platform", color: "bg-amber-400" },
+            { name: "Peer Attestation", weight: 10, maxPts: 55, description: "Vouches from circle members (coming soon)", color: "bg-cyan-400" },
+          ].map((component) => {
+            const earnedPts = creditScore?.stats
+              ? Math.round(
+                  component.name === "Payment History"
+                    ? (creditScore.stats.onTimePayments / Math.max(creditScore.stats.totalPayments, 1)) * component.maxPts
+                    : component.name === "Circle Completion"
+                    ? Math.min(creditScore.stats.circlesCompleted * 45, component.maxPts)
+                    : 0
+                )
+              : 0;
+            const progress = (earnedPts / component.maxPts) * 100;
+
+            return (
+              <div key={component.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-white font-medium">{component.name}</span>
+                    <span className="text-xs text-neutral-500 ml-2">({component.weight}%)</span>
+                  </div>
+                  <span className="text-sm font-mono text-neutral-400">
+                    {earnedPts}/{component.maxPts} pts
+                  </span>
+                </div>
+                <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${component.color} transition-all duration-500`}
+                    style={{ width: `${Math.min(progress, 100)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-neutral-500">{component.description}</p>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Tier Benefits */}
+      <Card variant="glass" className="p-6">
+        <CardHeader className="p-0 mb-6">
+          <CardTitle className="text-lg text-white">Credit Tiers</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { tier: "Building", range: "300-499", color: "border-red-500/30 bg-red-500/5", textColor: "text-red-400", benefits: "Basic access" },
+              { tier: "Fair", range: "500-599", color: "border-orange-500/30 bg-orange-500/5", textColor: "text-orange-400", benefits: "Reduced collateral" },
+              { tier: "Good", range: "600-699", color: "border-yellow-500/30 bg-yellow-500/5", textColor: "text-yellow-400", benefits: "Lending access" },
+              { tier: "Excellent", range: "700-850", color: "border-emerald-500/30 bg-emerald-500/5", textColor: "text-emerald-400", benefits: "Premium benefits" },
+            ].map((t) => (
+              <div
+                key={t.tier}
+                className={`rounded-xl border p-4 ${t.color} ${
+                  creditScore?.tier === t.tier.toLowerCase() ? "ring-1 ring-white/20" : ""
+                }`}
+              >
+                <p className={`text-sm font-semibold ${t.textColor}`}>{t.tier}</p>
+                <p className="text-xs text-neutral-400 font-mono mt-1">{t.range}</p>
+                <p className="text-xs text-neutral-500 mt-2">{t.benefits}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Recent Activity */}
       <Card variant="glass" className="p-6">
         <CardHeader className="p-0 mb-6">
