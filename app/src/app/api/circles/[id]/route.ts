@@ -92,7 +92,7 @@ export async function GET(
         .from("contributions")
         .select("*")
         .eq("circle_id", id)
-        .eq("period_number", circle.current_period);
+        .eq("period", circle.current_period);
 
       contributions = contribData;
     }

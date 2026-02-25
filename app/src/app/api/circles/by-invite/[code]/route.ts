@@ -48,11 +48,10 @@ export async function GET(
         description,
         contribution_amount,
         contribution_frequency,
-        total_members,
-        current_members,
+        member_count,
         status,
         invite_code,
-        creator:users!circles_creator_id_fkey(id, name)
+        creator:users!circles_organizer_id_fkey(id, name)
       `
       )
       .eq("invite_code", code.toUpperCase())
@@ -65,7 +64,7 @@ export async function GET(
       );
     }
 
-    const circle = circleData as CircleData;
+    const circle = circleData as any;
 
     // Check if user is already a member
     const { data: membership } = await supabase
@@ -75,11 +74,23 @@ export async function GET(
       .eq("user_id", session.user.id)
       .single();
 
+    // Count current members
+    const { count: currentMembers } = await supabase
+      .from("memberships")
+      .select("*", { count: "exact", head: true })
+      .eq("circle_id", circle.id);
+
+    const totalMembers = circle.member_count;
+
     return NextResponse.json({
-      circle,
+      circle: {
+        ...circle,
+        total_members: totalMembers,
+        current_members: currentMembers || 0,
+      },
       isAlreadyMember: !!membership,
       canJoin: circle.status === "forming" && !membership,
-      spotsRemaining: circle.total_members - circle.current_members,
+      spotsRemaining: totalMembers - (currentMembers || 0),
     });
   } catch (error) {
     console.error("GET /api/circles/by-invite/[code] error:", error);
