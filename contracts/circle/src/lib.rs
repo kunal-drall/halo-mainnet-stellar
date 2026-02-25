@@ -794,33 +794,35 @@ impl HaloCircle {
             return Ok(client.get_id(address));
         }
 
-        // When cross-contract feature is disabled, generate a deterministic ID for testing
+        // When cross-contract feature is disabled, generate a deterministic ID for testing.
+        // Note: unique_id only affects MemberState values (not storage keys),
+        // so non-determinism here is OK for footprint purposes.
         #[cfg(not(feature = "cross-contract"))]
         {
             let mut data = Bytes::new(env);
-            // Add a domain separator
             data.push_back(b'H');
             data.push_back(b'A');
             data.push_back(b'L');
             data.push_back(b'O');
-            // Add ledger sequence for uniqueness
             let seq = env.ledger().sequence();
             for byte in seq.to_be_bytes() {
                 data.push_back(byte);
             }
+            let _ = address; // suppress unused warning
             let hash = env.crypto().sha256(&data);
             Ok(BytesN::from_array(env, &hash.to_array()))
         }
     }
 
     fn generate_circle_id(env: &Env, _creator: &Address, count: u64) -> BytesN<32> {
-        let timestamp = env.ledger().timestamp();
-
+        // IMPORTANT: Only use deterministic inputs (count from contract storage).
+        // Timestamp/ledger-sequence change between simulation and execution,
+        // causing the storage footprint to mismatch and a Trapped error.
         let mut data = Bytes::new(env);
+        data.push_back(b'C'); // domain separator for circle IDs
+        data.push_back(b'I');
+        data.push_back(b'D');
         for byte in count.to_be_bytes() {
-            data.push_back(byte);
-        }
-        for byte in timestamp.to_be_bytes() {
             data.push_back(byte);
         }
 
@@ -829,12 +831,13 @@ impl HaloCircle {
     }
 
     fn generate_invite_code(env: &Env, circle_id: &BytesN<32>) -> BytesN<16> {
-        let timestamp = env.ledger().timestamp();
+        // Derive invite code solely from circle_id (which is already deterministic).
+        // No timestamp to avoid footprint mismatch between simulation and execution.
         let mut data = Bytes::new(env);
+        data.push_back(b'I'); // domain separator for invite codes
+        data.push_back(b'N');
+        data.push_back(b'V');
         for byte in circle_id.to_array() {
-            data.push_back(byte);
-        }
-        for byte in timestamp.to_be_bytes() {
             data.push_back(byte);
         }
 
