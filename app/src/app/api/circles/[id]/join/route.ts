@@ -17,8 +17,7 @@ interface UserData {
 interface CircleData {
   id: string;
   status: string;
-  total_members: number;
-  current_members: number;
+  member_count: number;
   contribution_frequency?: string;
   [key: string]: any;
 }
@@ -111,7 +110,7 @@ export async function POST(
       .select("*", { count: "exact", head: true })
       .eq("circle_id", circleId);
 
-    if ((memberCount || 0) >= circle.total_members) {
+    if ((memberCount || 0) >= circle.member_count) {
       return NextResponse.json({ error: "Circle is full" }, { status: 400 });
     }
 
@@ -143,7 +142,7 @@ export async function POST(
       .eq("id", circleId);
 
     // Check if circle is now full and should become active
-    if ((memberCount || 0) + 1 >= circle.total_members) {
+    if ((memberCount || 0) + 1 >= circle.member_count) {
       // Calculate first period start and end dates
       const startDate = new Date();
       const endDate = new Date();

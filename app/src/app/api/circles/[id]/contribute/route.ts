@@ -12,8 +12,7 @@ interface CircleData {
   grace_period_hours?: number;
   contribution_amount: number;
   late_fee_percentage?: number;
-  current_members: number;
-  total_members: number;
+  member_count: number;
   contribution_frequency?: string;
   [key: string]: any;
 }
@@ -108,7 +107,7 @@ export async function POST(
       .select("id")
       .eq("circle_id", circleId)
       .eq("user_id", session.user.id)
-      .eq("period_number", circle.current_period)
+      .eq("period", circle.current_period)
       .single();
 
     if (existingContribution) {
@@ -120,25 +119,26 @@ export async function POST(
 
     // Determine if payment is on time or late
     const now = new Date();
-    const periodEnd = new Date(circle.current_period_end);
-    const gracePeriodEnd = new Date(periodEnd);
-    gracePeriodEnd.setHours(gracePeriodEnd.getHours() + (circle.grace_period_hours || 24));
-
-    let status: "pending" | "confirmed" | "late" = "confirmed";
+    const periodEnd = circle.current_period_end ? new Date(circle.current_period_end) : null;
+    let isLate = false;
     let lateFee = 0;
 
-    if (now > periodEnd) {
-      if (now > gracePeriodEnd) {
-        // Past grace period - still accept but mark as late with fee
-        status = "late";
-        lateFee = Math.floor(
-          (circle.contribution_amount * (circle.late_fee_percentage || 5)) / 100
-        );
-      } else {
-        // Within grace period - late but no fee
-        status = "late";
+    if (periodEnd) {
+      const gracePeriodEnd = new Date(periodEnd);
+      gracePeriodEnd.setHours(gracePeriodEnd.getHours() + (circle.grace_period_hours || 24));
+
+      if (now > periodEnd) {
+        isLate = true;
+        if (now > gracePeriodEnd) {
+          // Past grace period - late with fee
+          lateFee = Math.floor(
+            (circle.contribution_amount * (circle.late_fee_percentage || 5)) / 100
+          );
+        }
       }
     }
+
+    const contributionStatus = isLate ? "late" : "paid";
 
     // Create contribution record
     const { data: contribution, error: contributionError } = await supabase
@@ -151,8 +151,8 @@ export async function POST(
         amount: amount || circle.contribution_amount,
         late_fee: lateFee,
         due_date: circle.current_period_end || new Date().toISOString(),
-        status: status === "confirmed" ? "paid" : status,
-        on_time: status === "confirmed",
+        status: contributionStatus,
+        on_time: !isLate,
         transaction_hash: transactionHash,
         paid_at: now.toISOString(),
       } as any)
@@ -167,26 +167,23 @@ export async function POST(
       );
     }
 
-    // Note: Membership stats would be updated here if schema supported it
-    // For MVP, we track contributions via the contributions table
-
     // Check if all members have contributed for this period
     const { count: contributionCount } = await supabase
       .from("contributions")
       .select("*", { count: "exact", head: true })
       .eq("circle_id", circleId)
-      .eq("period_number", circle.current_period)
-      .in("status", ["confirmed", "late"]);
+      .eq("period", circle.current_period)
+      .in("status", ["paid", "late"]);
 
     // If all members contributed, process payout
-    if ((contributionCount || 0) >= circle.current_members) {
+    if ((contributionCount || 0) >= circle.member_count) {
       await processPayout(supabase, circle);
     }
 
     return NextResponse.json({
       message: "Contribution recorded successfully",
       contribution,
-      isLate: status === "late",
+      isLate,
       lateFee,
     });
   } catch (error) {
@@ -218,7 +215,7 @@ async function processPayout(supabase: ReturnType<typeof createAdminClient>, cir
   const recipient = recipientData as RecipientData;
 
   // Calculate payout amount (all contributions minus any protocol fee)
-  const payoutAmount = circle.contribution_amount * circle.current_members;
+  const payoutAmount = circle.contribution_amount * circle.member_count;
 
   // Create payout record
   await (supabase.from("payouts") as any).insert({
@@ -238,7 +235,7 @@ async function processPayout(supabase: ReturnType<typeof createAdminClient>, cir
     .eq("id", recipient.id);
 
   // Advance to next period or complete circle
-  if (circle.current_period >= circle.total_members) {
+  if (circle.current_period >= circle.member_count) {
     // Circle is complete
     await (supabase.from("circles") as any)
       .update({

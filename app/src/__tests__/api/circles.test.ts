@@ -119,10 +119,12 @@ describe('POST /api/circles', () => {
     expect(json.error).toBe('Unauthorized');
   });
 
-  it('returns 403 when onboarding not completed', async () => {
+  it('returns 404 when user not found in database', async () => {
     const session = createMockSession();
-    (session.user as any).onboardingCompleted = false;
     mockedGetServerSession.mockResolvedValueOnce(session);
+
+    const supabaseMock = createSupabaseMock({ data: null, error: null });
+    mockedCreateAdminClient.mockReturnValue(supabaseMock);
 
     const request = new NextRequest('http://localhost:3000/api/circles', {
       method: 'POST',
@@ -130,9 +132,9 @@ describe('POST /api/circles', () => {
     });
     const response = await POST(request);
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(404);
     const json = await response.json();
-    expect(json.error).toBe('Please complete onboarding first');
+    expect(json.error).toBe('User not found');
   });
 
   it('returns 400 when name is too short', async () => {
@@ -262,7 +264,7 @@ describe('POST /api/circles', () => {
 
     expect(response.status).toBe(400);
     const json = await response.json();
-    expect(json.error).toBe('Wallet not bound');
+    expect(json.error).toBe('Please connect your wallet first');
   });
 
   it('returns 400 when user has too many active circles', async () => {
