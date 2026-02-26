@@ -81,10 +81,10 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user, account, trigger }) {
-      // On initial sign in, get user data
-      if (account && user) {
-        const supabase = createAdminClient();
+      const supabase = createAdminClient();
 
+      // On initial sign in, get user data from Supabase
+      if (account && user) {
         const { data: userDataResult } = await supabase
           .from("users")
           .select("id, kyc_status, wallet_address, onboarding_completed")
@@ -101,10 +101,26 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      // On token refresh, update user data
-      if (trigger === "update") {
-        const supabase = createAdminClient();
+      // If token.id is missing (e.g. user was just created), try to resolve it
+      if (!token.id && token.email) {
+        const { data: userDataResult } = await supabase
+          .from("users")
+          .select("id, kyc_status, wallet_address, onboarding_completed")
+          .eq("email", token.email)
+          .single();
 
+        const userData = userDataResult as SupabaseUserData | null;
+
+        if (userData) {
+          token.id = userData.id;
+          token.kycStatus = userData.kyc_status;
+          token.walletAddress = userData.wallet_address ?? undefined;
+          token.onboardingCompleted = userData.onboarding_completed;
+        }
+      }
+
+      // On explicit token refresh, update user data
+      if (trigger === "update" && token.id) {
         const { data: userDataResult } = await supabase
           .from("users")
           .select("id, kyc_status, wallet_address, onboarding_completed")

@@ -218,7 +218,7 @@ export default function WalletPage() {
               {error && (
                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                   <p className="text-sm text-red-400">{error}</p>
-                  {error.includes("not found") && (
+                  {error.includes("Freighter") && error.toLowerCase().includes("not found") && (
                     <a
                       href="https://www.freighter.app/"
                       target="_blank"

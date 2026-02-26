@@ -53,15 +53,28 @@ export async function POST(req: NextRequest) {
     const { walletAddress, signedTransaction } = validation.data;
     const supabase = createAdminClient();
 
-    // Get user with KYC status
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
+    // Get user with KYC status - try by ID first, then by email as fallback
+    let userData: any = null;
+    if (session.user.id) {
+      const { data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+      userData = data;
+    }
 
-    if (userError || !userData) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!userData && session.user.email) {
+      const { data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", session.user.email)
+        .single();
+      userData = data;
+    }
+
+    if (!userData) {
+      return NextResponse.json({ error: "Account not found. Please sign out and sign in again." }, { status: 404 });
     }
 
     const user = userData as UserData;
