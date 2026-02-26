@@ -80,11 +80,8 @@ export class CircleContract {
     const contract = stellarClient.getContract(this.contractId);
 
     // Build the CircleConfig struct as ScVal
+    // IMPORTANT: Soroban requires ScMap keys to be sorted alphabetically
     const configScVal = xdr.ScVal.scvMap([
-      new xdr.ScMapEntry({
-        key: symbolToScVal("name"),
-        val: symbolToScVal(config.name),
-      }),
       new xdr.ScMapEntry({
         key: symbolToScVal("contribution_amount"),
         val: i128ToScVal(config.contributionAmount),
@@ -94,20 +91,24 @@ export class CircleContract {
         val: addressToScVal(USDC_CONTRACT_ADDRESS),
       }),
       new xdr.ScMapEntry({
-        key: symbolToScVal("total_members"),
-        val: u32ToScVal(config.totalMembers),
-      }),
-      new xdr.ScMapEntry({
-        key: symbolToScVal("period_length"),
-        val: u64ToScVal(config.periodLength),
-      }),
-      new xdr.ScMapEntry({
         key: symbolToScVal("grace_period"),
         val: u64ToScVal(config.gracePeriod),
       }),
       new xdr.ScMapEntry({
         key: symbolToScVal("late_fee_percent"),
         val: u32ToScVal(config.lateFeePercent),
+      }),
+      new xdr.ScMapEntry({
+        key: symbolToScVal("name"),
+        val: symbolToScVal(config.name),
+      }),
+      new xdr.ScMapEntry({
+        key: symbolToScVal("period_length"),
+        val: u64ToScVal(config.periodLength),
+      }),
+      new xdr.ScMapEntry({
+        key: symbolToScVal("total_members"),
+        val: u32ToScVal(config.totalMembers),
       }),
     ]);
 

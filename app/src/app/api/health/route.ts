@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rpc } from "@stellar/stellar-sdk";
 
 export async function GET() {
   const checks: Record<string, string> = {};
@@ -17,6 +18,12 @@ export async function GET() {
   checks.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
     ? "set"
     : "MISSING";
+  checks.CIRCLE_CONTRACT_ADDRESS = process.env.CIRCLE_CONTRACT_ADDRESS
+    ? "set"
+    : "MISSING (using default)";
+  checks.SOROBAN_RPC_URL = process.env.SOROBAN_RPC_URL
+    ? "set"
+    : "MISSING (using default)";
 
   // Test Supabase connection
   try {
@@ -34,8 +41,18 @@ export async function GET() {
     checks.supabase = `exception: ${err instanceof Error ? err.message : String(err)}`;
   }
 
+  // Test Soroban RPC connection
+  try {
+    const rpcUrl = process.env.SOROBAN_RPC_URL || "https://soroban-testnet.stellar.org";
+    const server = new rpc.Server(rpcUrl);
+    const health = await server.getHealth();
+    checks.soroban = `connected (ledger: ${health.latestLedger})`;
+  } catch (err) {
+    checks.soroban = `error: ${err instanceof Error ? err.message : String(err)}`;
+  }
+
   const allOk = !Object.values(checks).some(
-    (v) => v === "MISSING" || v.startsWith("error") || v.startsWith("exception")
+    (v) => v.startsWith("error") || v.startsWith("exception") || v === "MISSING"
   );
 
   return NextResponse.json(
