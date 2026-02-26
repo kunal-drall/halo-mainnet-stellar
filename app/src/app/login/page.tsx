@@ -4,18 +4,25 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthError } from "@/components/auth/auth-error";
 
 export const metadata = {
   title: "Sign In - Halo Protocol",
   description: "Sign in to your Halo Protocol account",
 };
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   const session = await getServerSession(authOptions);
 
   if (session) {
     redirect("/dashboard");
   }
+
+  const { error } = await searchParams;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 grid-pattern">
@@ -43,6 +50,7 @@ export default async function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {error && <AuthError error={error} />}
             <GoogleSignInButton />
 
             <div className="relative">

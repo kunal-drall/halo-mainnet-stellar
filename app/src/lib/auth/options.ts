@@ -53,31 +53,46 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (!user.email) return false;
 
-      const supabase = createAdminClient();
+      try {
+        const supabase = createAdminClient();
 
-      // Check if user already exists
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", user.email)
-        .single();
+        // Check if user already exists (use maybeSingle to avoid error on zero rows)
+        const { data: existingUser, error: lookupError } = await supabase
+          .from("users")
+          .select("id")
+          .eq("email", user.email)
+          .maybeSingle();
 
-      if (!existingUser) {
-        // Create new user in our users table
-        const { error } = await (supabase.from("users") as any).insert({
-          email: user.email,
-          name: user.name || "User",
-          profile_image: user.image,
-          google_id: account?.providerAccountId,
-        });
-
-        if (error) {
-          console.error("Error creating user:", error);
-          return false;
+        if (lookupError) {
+          console.error("[auth] Error looking up user:", lookupError);
+          // Continue anyway — try to create the user
         }
-      }
 
-      return true;
+        if (!existingUser) {
+          // Create new user in our users table
+          const { error } = await (supabase.from("users") as any).insert({
+            email: user.email,
+            name: user.name || "User",
+            profile_image: user.image,
+            google_id: account?.providerAccountId,
+          });
+
+          if (error) {
+            // If it's a unique constraint violation, the user was already created (race condition)
+            if (error.code === "23505") {
+              console.log("[auth] User already exists (race condition), proceeding");
+              return true;
+            }
+            console.error("[auth] Error creating user:", error);
+            return false;
+          }
+        }
+
+        return true;
+      } catch (err) {
+        console.error("[auth] Unexpected error in signIn callback:", err);
+        return false;
+      }
     },
 
     async jwt({ token, user, account, trigger }) {
