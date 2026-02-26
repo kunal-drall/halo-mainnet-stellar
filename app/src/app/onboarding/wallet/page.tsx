@@ -9,6 +9,7 @@ import {
   isAllowed,
   requestAccess,
   getAddress,
+  signTransaction,
 } from "@stellar/freighter-api";
 
 export default function WalletPage() {
@@ -104,6 +105,30 @@ export default function WalletPage() {
         }
         setIsConnecting(false);
         return;
+      }
+
+      // Sign and submit on-chain identity binding transaction
+      if (data.transactionXdr) {
+        try {
+          const signResult = await signTransaction(data.transactionXdr, {
+            networkPassphrase: "Test SDF Network ; September 2015",
+          });
+
+          if (signResult.signedTxXdr) {
+            const submitRes = await fetch("/api/stellar/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ signedXdr: signResult.signedTxXdr }),
+            });
+
+            if (!submitRes.ok) {
+              console.error("On-chain identity binding submission failed, but DB binding succeeded");
+            }
+          }
+        } catch (signError) {
+          console.error("On-chain identity binding signing failed:", signError);
+          // DB binding already succeeded, user can still proceed
+        }
       }
 
       // Success - wallet is now bound

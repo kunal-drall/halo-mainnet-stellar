@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { circleContract } from "@/lib/stellar/contracts/circle";
+import { identityContract } from "@/lib/stellar/contracts/identity";
 import { queryTokenBalance } from "@/lib/stellar/client";
 
 // Type for user data from Supabase
@@ -113,6 +114,34 @@ export async function POST(
 
     if ((memberCount || 0) >= circle.member_count) {
       return NextResponse.json({ error: "Circle is full" }, { status: 400 });
+    }
+
+    // Check if user's identity is bound on-chain (required for circle operations)
+    try {
+      const isBound = await identityContract.isBound(user.wallet_address!);
+      if (!isBound) {
+        if (!user.unique_id) {
+          return NextResponse.json(
+            { error: "Identity not set up. Please reconnect your wallet." },
+            { status: 400 }
+          );
+        }
+        const uniqueIdBytes = Buffer.from(user.unique_id, "hex");
+        const identityTransactionXdr = await identityContract.buildBindWalletTransaction(
+          uniqueIdBytes,
+          user.wallet_address!
+        );
+        return NextResponse.json(
+          {
+            error: "Identity not bound on-chain. Please sign the identity binding transaction first.",
+            requiresIdentityBinding: true,
+            identityTransactionXdr,
+          },
+          { status: 428 }
+        );
+      }
+    } catch (identityError) {
+      console.error("[join] Identity check failed:", identityError);
     }
 
     // Check token balance — user needs at least 1x contribution as collateral

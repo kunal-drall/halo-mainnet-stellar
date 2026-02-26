@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { circleContract, CircleConfig } from "@/lib/stellar/contracts/circle";
+import { identityContract } from "@/lib/stellar/contracts/identity";
 import { queryTokenBalance, USDC_CONTRACT_ADDRESS } from "@/lib/stellar/client";
 import { z } from "zod";
 
@@ -156,6 +157,41 @@ export async function POST(req: NextRequest) {
     } catch (balanceError) {
       console.error("[circles] Balance check failed:", balanceError);
       // Allow creation to proceed if balance check fails (RPC issue)
+    }
+
+    // Check if user's identity is bound on-chain (required for circle creation)
+    let identityTransactionXdr: string | null = null;
+    try {
+      const isBound = await identityContract.isBound(user.wallet_address);
+      if (!isBound) {
+        // Identity not bound on-chain — build binding transaction
+        if (!user.unique_id) {
+          return NextResponse.json(
+            { error: "Identity not set up. Please reconnect your wallet." },
+            { status: 400 }
+          );
+        }
+        const uniqueIdBytes = Buffer.from(user.unique_id, "hex");
+        identityTransactionXdr = await identityContract.buildBindWalletTransaction(
+          uniqueIdBytes,
+          user.wallet_address
+        );
+      }
+    } catch (identityError) {
+      console.error("[circles] Identity check failed:", identityError);
+      // Continue — will fail at contract level if identity is truly not bound
+    }
+
+    // If identity needs binding, return that transaction first
+    if (identityTransactionXdr) {
+      return NextResponse.json(
+        {
+          error: "Identity not bound on-chain. Please sign the identity binding transaction first.",
+          requiresIdentityBinding: true,
+          identityTransactionXdr,
+        },
+        { status: 428 } // Precondition Required
+      );
     }
 
     // Build on-chain transaction first — this must succeed

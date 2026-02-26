@@ -122,12 +122,53 @@ export default function CreateCirclePage() {
         }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+
+      // Handle identity binding requirement (status 428)
+      if (response.status === 428 && data.requiresIdentityBinding && data.identityTransactionXdr) {
+        // Sign identity binding transaction first
+        const identitySignResult = await signTransaction(data.identityTransactionXdr, {
+          networkPassphrase: "Test SDF Network ; September 2015",
+        });
+
+        if (!identitySignResult.signedTxXdr) {
+          throw new Error("Identity binding cancelled. This is required before creating a circle.");
+        }
+
+        // Submit identity binding transaction
+        const identitySubmitResponse = await fetch("/api/stellar/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ signedXdr: identitySignResult.signedTxXdr }),
+        });
+
+        if (!identitySubmitResponse.ok) {
+          const identityError = await identitySubmitResponse.json();
+          throw new Error(identityError.error || "Failed to bind identity on-chain");
+        }
+
+        // Retry circle creation now that identity is bound
+        const retryResponse = await fetch("/api/circles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            contributionAmount: formData.contributionAmount,
+            memberCount: formData.memberCount,
+            startDate: new Date(formData.startDate).toISOString(),
+          }),
+        });
+
+        if (!retryResponse.ok) {
+          const retryData = await retryResponse.json();
+          throw new Error(retryData.error || "Failed to create circle after identity binding");
+        }
+
+        // Use the retry response data
+        Object.assign(data, await retryResponse.json());
+      } else if (!response.ok) {
         throw new Error(data.error || "Failed to create circle");
       }
-
-      const data = await response.json();
 
       // Step 2: Sign the on-chain transaction with Freighter (mandatory)
       if (!data.transactionXdr) {
