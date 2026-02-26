@@ -128,40 +128,39 @@ export default function CreateCirclePage() {
       }
 
       const data = await response.json();
-      let onChainTxHash: string | undefined;
 
-      // Step 2: If we got a transaction XDR, prompt user to sign it
-      if (data.transactionXdr) {
-        try {
-          // Sign the transaction with Freighter
-          const signResult = await signTransaction(data.transactionXdr, {
-            networkPassphrase: "Test SDF Network ; September 2015",
-          });
-
-          if (signResult.signedTxXdr) {
-            // Submit the signed transaction to Stellar
-            const submitResponse = await fetch("/api/stellar/submit", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ signedXdr: signResult.signedTxXdr }),
-            });
-
-            if (submitResponse.ok) {
-              const submitData = await submitResponse.json();
-              onChainTxHash = submitData.hash;
-            }
-          }
-        } catch (signError) {
-          // User rejected or Freighter error - circle is still created in DB
-          console.log("Transaction signing skipped:", signError);
-        }
+      // Step 2: Sign the on-chain transaction with Freighter (mandatory)
+      if (!data.transactionXdr) {
+        throw new Error("Server did not return a transaction to sign");
       }
+
+      const signResult = await signTransaction(data.transactionXdr, {
+        networkPassphrase: "Test SDF Network ; September 2015",
+      });
+
+      if (!signResult.signedTxXdr) {
+        throw new Error("Transaction signing was cancelled. Circle creation requires an on-chain transaction.");
+      }
+
+      // Step 3: Submit the signed transaction to Stellar
+      const submitResponse = await fetch("/api/stellar/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ signedXdr: signResult.signedTxXdr }),
+      });
+
+      if (!submitResponse.ok) {
+        const submitError = await submitResponse.json();
+        throw new Error(submitError.error || "Failed to submit on-chain transaction");
+      }
+
+      const submitData = await submitResponse.json();
 
       setCreateResult({
         circle: data.circle,
         inviteCode: data.inviteCode,
         inviteLink: data.inviteLink || `${window.location.origin}/circles/join/${data.inviteCode}`,
-        onChainTxHash,
+        onChainTxHash: submitData.hash,
       });
       setStep(4); // Success step
     } catch (err) {

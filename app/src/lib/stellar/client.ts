@@ -302,6 +302,34 @@ export async function simulateContractCall(
 }
 
 /**
+ * Query a Soroban token balance for a given address.
+ * Calls the SAC/SEP-41 `balance` function on the token contract.
+ * @param tokenContractId - The token contract address
+ * @param walletAddress - The wallet address to check
+ * @returns The balance as bigint (in token stroops), or 0n on error
+ */
+export async function queryTokenBalance(
+  tokenContractId: string,
+  walletAddress: string
+): Promise<bigint> {
+  try {
+    const result = await simulateContractCall(
+      tokenContractId,
+      "balance",
+      [addressToScVal(walletAddress)]
+    );
+
+    if (result) {
+      return scValToI128(result);
+    }
+    return BigInt(0);
+  } catch (error) {
+    console.error("Error querying token balance:", error);
+    return BigInt(0);
+  }
+}
+
+/**
  * Parse simulation result using the SDK's scValToNative helper
  * This provides automatic conversion for most types
  */

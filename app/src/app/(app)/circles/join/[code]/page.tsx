@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { signTransaction } from "@stellar/freighter-api";
 
 interface CirclePreview {
   id: string;
@@ -67,6 +68,7 @@ export default function JoinCirclePage() {
     setError(null);
 
     try {
+      // Step 1: Call join API to create membership and get on-chain transaction
       const res = await fetch(`/api/circles/${lookupResult.circle.id}/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,6 +80,30 @@ export default function JoinCirclePage() {
       if (!res.ok) {
         setError(data.error || "Failed to join circle");
         return;
+      }
+
+      // Step 2: If we got an on-chain transaction, sign and submit it
+      if (data.transactionXdr) {
+        try {
+          const signResult = await signTransaction(data.transactionXdr, {
+            networkPassphrase: "Test SDF Network ; September 2015",
+          });
+
+          if (signResult.signedTxXdr) {
+            const submitRes = await fetch("/api/stellar/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ signedXdr: signResult.signedTxXdr }),
+            });
+
+            if (!submitRes.ok) {
+              console.error("On-chain join submission failed, but DB join succeeded");
+            }
+          }
+        } catch (signError) {
+          console.error("On-chain join signing failed:", signError);
+          // DB join already succeeded, proceed
+        }
       }
 
       setJoined(true);

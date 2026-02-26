@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { circleContract } from "@/lib/stellar/contracts/circle";
+import { queryTokenBalance } from "@/lib/stellar/client";
 
 // Type for user data from Supabase
 interface UserData {
@@ -114,6 +115,43 @@ export async function POST(
       return NextResponse.json({ error: "Circle is full" }, { status: 400 });
     }
 
+    // Check token balance — user needs at least 1x contribution as collateral
+    const contributionAmount = BigInt(circle.contribution_amount || 0);
+    if (contributionAmount > 0 && user.wallet_address) {
+      try {
+        const tokenAddress = circle.contribution_token || process.env.USDC_CONTRACT_ADDRESS;
+        const balance = await queryTokenBalance(tokenAddress, user.wallet_address);
+        if (balance < contributionAmount) {
+          const required = (Number(contributionAmount) / 10_000_000).toFixed(2);
+          const available = (Number(balance) / 10_000_000).toFixed(2);
+          return NextResponse.json(
+            {
+              error: `Insufficient token balance. You need at least $${required} as collateral but only have $${available}. Please fund your wallet first.`,
+            },
+            { status: 400 }
+          );
+        }
+      } catch (balanceError) {
+        console.error("[join] Balance check failed:", balanceError);
+        // Allow join to proceed if balance check fails (RPC issue)
+      }
+    }
+
+    // Build on-chain join transaction
+    let transactionXdr: string | null = null;
+    if (circle.contract_circle_id && circle.contract_circle_id !== "pending_signature") {
+      try {
+        const circleIdBytes = Buffer.from(circle.contract_circle_id, "hex");
+        transactionXdr = await circleContract.buildJoinCircleByIdTransaction(
+          circleIdBytes,
+          user.wallet_address!
+        );
+      } catch (txError) {
+        console.error("[join] Failed to build on-chain join transaction:", txError);
+        // Continue with DB-only join if contract tx fails
+      }
+    }
+
     // Determine payout position (next available)
     const payoutPosition = (memberCount || 0) + 1;
 
@@ -135,11 +173,6 @@ export async function POST(
         { status: 500 }
       );
     }
-
-    // Update circle member count
-    await (supabase.from("circles") as any)
-      .update({ current_members: (memberCount || 0) + 1 })
-      .eq("id", circleId);
 
     // Check if circle is now full and should become active
     if ((memberCount || 0) + 1 >= circle.member_count) {
@@ -166,13 +199,11 @@ export async function POST(
         .eq("id", circleId);
     }
 
-    // TODO: Call on-chain join_circle when wallet signing is implemented
-    // This would be done via a separate endpoint that handles wallet signing
-
     return NextResponse.json({
       message: "Successfully joined circle",
       membership,
       payoutPosition,
+      transactionXdr, // Frontend must sign this to complete on-chain join
     });
   } catch (error) {
     console.error("POST /api/circles/[id]/join error:", error);

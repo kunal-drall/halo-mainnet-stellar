@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { circleContract, CircleConfig } from "@/lib/stellar/contracts/circle";
+import { queryTokenBalance, USDC_CONTRACT_ADDRESS } from "@/lib/stellar/client";
 import { z } from "zod";
 
 // Type for user data
@@ -138,20 +139,63 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Check token balance — user needs at least 1x contribution as collateral
+    const contributionToken = process.env.USDC_CONTRACT_ADDRESS || USDC_CONTRACT_ADDRESS;
+    const requiredAmount = BigInt(input.contributionAmount * 10_000_000); // 7 decimals
+    try {
+      const balance = await queryTokenBalance(contributionToken, user.wallet_address);
+      if (balance < requiredAmount) {
+        const balanceFormatted = (Number(balance) / 10_000_000).toFixed(2);
+        return NextResponse.json(
+          {
+            error: `Insufficient token balance. You need at least $${input.contributionAmount} as collateral but only have $${balanceFormatted}. Please fund your wallet first.`,
+          },
+          { status: 400 }
+        );
+      }
+    } catch (balanceError) {
+      console.error("[circles] Balance check failed:", balanceError);
+      // Allow creation to proceed if balance check fails (RPC issue)
+    }
+
+    // Build on-chain transaction first — this must succeed
+    const contractConfig: CircleConfig = {
+      name: input.name,
+      contributionAmount: requiredAmount,
+      totalMembers: input.memberCount,
+      periodLength: BigInt(30 * 24 * 60 * 60),
+      gracePeriod: BigInt(7 * 24 * 60 * 60),
+      lateFeePercent: 5,
+    };
+
+    let transactionXdr: string;
+    try {
+      transactionXdr = await circleContract.buildCreateCircleTransaction(
+        user.wallet_address,
+        contractConfig
+      );
+    } catch (txError) {
+      console.error("[circles] Failed to build on-chain transaction:", txError);
+      return NextResponse.json(
+        { error: "Failed to prepare on-chain transaction. Please try again." },
+        { status: 500 }
+      );
+    }
+
     // Generate invite code
     const inviteCode = generateInviteCode();
 
-    // Create circle record in database first
+    // Create circle record in database
     const { data: circleData, error: circleError } = await (supabase.from("circles") as any)
       .insert({
         name: input.name,
-        contribution_amount: input.contributionAmount * 10_000_000,
+        contribution_amount: Number(requiredAmount),
         member_count: input.memberCount,
         start_date: input.startDate.split("T")[0],
         invite_code: inviteCode,
         organizer_id: session.user.id,
-        contract_circle_id: "0".repeat(64), // Placeholder, updated after tx
-        contribution_token: process.env.USDC_CONTRACT_ADDRESS || "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+        contract_circle_id: "pending_signature", // Updated after on-chain tx is confirmed
+        contribution_token: contributionToken,
       })
       .select()
       .single();
@@ -172,28 +216,6 @@ export async function POST(req: NextRequest) {
 
     if (membershipError) {
       console.error("Error adding organizer as member:", membershipError);
-      // Circle was created, continue anyway
-    }
-
-    // Try to build contract transaction (optional for testnet)
-    let transactionXdr: string | null = null;
-    try {
-      const contractConfig: CircleConfig = {
-        name: input.name,
-        contributionAmount: BigInt(input.contributionAmount * 10_000_000),
-        totalMembers: input.memberCount,
-        periodLength: BigInt(30 * 24 * 60 * 60),
-        gracePeriod: BigInt(7 * 24 * 60 * 60),
-        lateFeePercent: 5,
-      };
-      transactionXdr = await circleContract.buildCreateCircleTransaction(
-        user.wallet_address,
-        contractConfig
-      );
-    } catch (txError) {
-      // Contract transaction building failed - this is OK for testnet
-      // The circle is still created in the database
-      console.log("Note: Contract transaction not built (testnet mode):", txError);
     }
 
     return NextResponse.json(
@@ -201,7 +223,7 @@ export async function POST(req: NextRequest) {
         circle,
         inviteCode,
         inviteLink: `${process.env.NEXT_PUBLIC_APP_URL || ""}/circles/join/${inviteCode}`,
-        transactionXdr, // May be null if contract call failed
+        transactionXdr, // Must be signed by the user's wallet
       },
       { status: 201 }
     );
