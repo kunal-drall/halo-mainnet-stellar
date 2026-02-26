@@ -69,7 +69,8 @@ export class StellarClient {
       if (status.status === "SUCCESS") {
         return status;
       } else if (status.status === "FAILED") {
-        throw new Error(`Transaction failed: ${hash}`);
+        const resultXdr = (status as any).resultXdr?.toXDR?.("base64") || "";
+        throw new Error(`Transaction failed: ${hash}${resultXdr ? ` (result: ${resultXdr})` : ""}`);
       }
       // "NOT_FOUND" means still pending
     }

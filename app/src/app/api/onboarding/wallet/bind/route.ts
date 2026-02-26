@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { identityContract } from "@/lib/stellar/contracts/identity";
 import { z } from "zod";
 import crypto from "crypto";
 
@@ -155,15 +156,25 @@ export async function POST(req: NextRequest) {
       tier: "building",
     });
 
-    // TODO: If signedTransaction is provided, submit to Stellar network
-    // to create the on-chain binding via Identity contract
-    // This requires the frontend to build and sign the transaction
+    // Build on-chain identity binding transaction
+    // The frontend must sign this with Freighter and submit it
+    let transactionXdr: string | null = null;
+    try {
+      const uniqueIdBytes = Buffer.from(uniqueId, "hex");
+      transactionXdr = await identityContract.buildBindWalletTransaction(
+        uniqueIdBytes,
+        walletAddress
+      );
+    } catch (txError) {
+      console.error("[wallet-bind] Failed to build identity binding transaction:", txError);
+      // Continue — DB binding succeeded, on-chain can be retried
+    }
 
     return NextResponse.json({
       message: "Wallet bound successfully",
       walletAddress,
       uniqueId,
-      onChainBound: !!signedTransaction,
+      transactionXdr, // Frontend must sign this to complete on-chain identity binding
     });
   } catch (error) {
     console.error("POST /api/onboarding/wallet/bind error:", error);

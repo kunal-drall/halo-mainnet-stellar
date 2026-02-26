@@ -77,7 +77,49 @@ export default function JoinCirclePage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      // Handle identity binding requirement (status 428)
+      if (res.status === 428 && data.requiresIdentityBinding && data.identityTransactionXdr) {
+        try {
+          const identitySignResult = await signTransaction(data.identityTransactionXdr, {
+            networkPassphrase: "Test SDF Network ; September 2015",
+          });
+
+          if (identitySignResult.signedTxXdr) {
+            const identitySubmitRes = await fetch("/api/stellar/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ signedXdr: identitySignResult.signedTxXdr }),
+            });
+
+            if (!identitySubmitRes.ok) {
+              setError("Failed to bind identity on-chain. Please try again.");
+              return;
+            }
+
+            // Retry join after identity binding
+            const retryRes = await fetch(`/api/circles/${lookupResult.circle.id}/join`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ inviteCode: code }),
+            });
+
+            const retryData = await retryRes.json();
+            if (!retryRes.ok) {
+              setError(retryData.error || "Failed to join circle after identity binding");
+              return;
+            }
+
+            // Use retry data for the rest of the flow
+            Object.assign(data, retryData);
+          } else {
+            setError("Identity binding cancelled. This is required to join a circle.");
+            return;
+          }
+        } catch (identityError) {
+          setError("Failed to bind identity. Please try again.");
+          return;
+        }
+      } else if (!res.ok) {
         setError(data.error || "Failed to join circle");
         return;
       }
