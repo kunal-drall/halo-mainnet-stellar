@@ -64,7 +64,46 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch circles" }, { status: 500 });
     }
 
-    return NextResponse.json({ circles: data });
+    // Also fetch publicly available circles the user can join
+    const { data: availableCircles } = await (supabase
+      .from("circles") as any)
+      .select("id, name, contribution_amount, member_count, status, invite_code, organizer_id, created_at")
+      .eq("status", "forming")
+      .neq("organizer_id", session.user.id)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    // Filter out circles user is already in
+    const userCircleIds = new Set((data || []).map((m: any) => m.circles?.id).filter(Boolean));
+    const discoverable = (availableCircles || []).filter((c: any) => !userCircleIds.has(c.id));
+
+    // Get member counts for discoverable circles
+    const discoverableWithCounts = await Promise.all(
+      discoverable.map(async (circle: any) => {
+        const { count } = await supabase
+          .from("memberships")
+          .select("*", { count: "exact", head: true })
+          .eq("circle_id", circle.id);
+
+        // Get organizer name
+        let organizerName = "Unknown";
+        if (circle.organizer_id) {
+          const { data: org } = await (supabase.from("users") as any)
+            .select("name")
+            .eq("id", circle.organizer_id)
+            .single();
+          if (org) organizerName = (org as any).name || "Unknown";
+        }
+
+        return {
+          ...circle,
+          current_members: count || 0,
+          organizer_name: organizerName,
+        };
+      })
+    );
+
+    return NextResponse.json({ circles: data, discoverable: discoverableWithCounts });
   } catch (error) {
     console.error("GET /api/circles error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
