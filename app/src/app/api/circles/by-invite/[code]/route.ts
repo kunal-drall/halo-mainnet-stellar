@@ -45,13 +45,12 @@ export async function GET(
         `
         id,
         name,
-        description,
         contribution_amount,
-        contribution_frequency,
+        frequency,
         member_count,
         status,
         invite_code,
-        creator:users!circles_organizer_id_fkey(id, name)
+        organizer_id
       `
       )
       .eq("invite_code", code.toUpperCase())
@@ -80,16 +79,37 @@ export async function GET(
       .select("*", { count: "exact", head: true })
       .eq("circle_id", circle.id);
 
+    // Get organizer name
+    let creatorName = "Unknown";
+    if (circle.organizer_id) {
+      const { data: organizer } = await supabase
+        .from("users")
+        .select("name")
+        .eq("id", circle.organizer_id)
+        .single();
+      if (organizer) creatorName = organizer.name || "Unknown";
+    }
+
     const totalMembers = circle.member_count;
 
     return NextResponse.json({
       circle: {
-        ...circle,
+        id: circle.id,
+        name: circle.name,
+        description: null,
+        contribution_amount: circle.contribution_amount,
+        contribution_frequency: circle.frequency || "monthly",
         total_members: totalMembers,
         current_members: currentMembers || 0,
+        status: circle.status,
+        invite_code: circle.invite_code,
+        creator: {
+          id: circle.organizer_id,
+          name: creatorName,
+        },
       },
       isAlreadyMember: !!membership,
-      canJoin: circle.status === "forming" && !membership,
+      canJoin: circle.status === "forming" && !membership && (currentMembers || 0) < totalMembers,
       spotsRemaining: totalMembers - (currentMembers || 0),
     });
   } catch (error) {
