@@ -205,7 +205,7 @@ User Action          Backend             Blockchain           Database
 | Contract | Address | Explorer |
 |----------|---------|----------|
 | **Identity** | `CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK) |
-| **Circle** | `CAZR2RDDZ2AJ6LUYFKOYAPI3PFW4KSQQBJ7REQLHQPYSMD6KZJEE5V4U` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAZR2RDDZ2AJ6LUYFKOYAPI3PFW4KSQQBJ7REQLHQPYSMD6KZJEE5V4U) |
+| **Circle** | `CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP) |
 | **Credit** | `CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3) |
 
 **Admin Address:** `GDKUDGFWBHGHXVPWT7RCJANSC46XSBO2I5ZVJXOXUDVSC74KMIT7P4JZ`
@@ -377,7 +377,7 @@ ScoreUpdated { unique_id: BytesN<32>, old_score: u32, new_score: u32 }
    STELLAR_NETWORK=testnet
    STELLAR_RPC_URL=https://soroban-testnet.stellar.org
    IDENTITY_CONTRACT_ADDRESS=CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK
-   CIRCLE_CONTRACT_ADDRESS=CAZR2RDDZ2AJ6LUYFKOYAPI3PFW4KSQQBJ7REQLHQPYSMD6KZJEE5V4U
+   CIRCLE_CONTRACT_ADDRESS=CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP
    CREDIT_CONTRACT_ADDRESS=CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3
    ```
 
@@ -538,7 +538,7 @@ Content-Type: application/json
 | Contract | Address |
 |----------|---------|
 | Identity | `CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK` |
-| Circle | `CAZR2RDDZ2AJ6LUYFKOYAPI3PFW4KSQQBJ7REQLHQPYSMD6KZJEE5V4U` |
+| Circle | `CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP` |
 | Credit | `CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3` |
 
 ### Network Configuration
@@ -744,7 +744,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 | **Production App** | [usehalo.fun](https://usehalo.fun) |
 | **Contract Explorer** | [Stellar Expert (Testnet)](https://stellar.expert/explorer/testnet) |
 | **Identity Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK) |
-| **Circle Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CAZR2RDDZ2AJ6LUYFKOYAPI3PFW4KSQQBJ7REQLHQPYSMD6KZJEE5V4U) |
+| **Circle Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP) |
 | **Credit Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3) |
 
 ---
