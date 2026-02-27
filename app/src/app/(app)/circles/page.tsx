@@ -26,8 +26,21 @@ interface Membership {
   circles: Circle;
 }
 
+interface DiscoverableCircle {
+  id: string;
+  name: string;
+  contribution_amount: number;
+  member_count: number;
+  status: string;
+  invite_code: string;
+  current_members: number;
+  organizer_name: string;
+  created_at: string;
+}
+
 export default function CirclesPage() {
   const [memberships, setMemberships] = useState<Membership[]>([]);
+  const [discoverable, setDiscoverable] = useState<DiscoverableCircle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +56,7 @@ export default function CirclesPage() {
       }
       const data = await response.json();
       setMemberships(data.circles || []);
+      setDiscoverable(data.discoverable || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -217,6 +231,66 @@ export default function CirclesPage() {
               </Link>
             );
           })}
+        </div>
+      )}
+
+      {/* Discover Circles */}
+      {discoverable.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <div>
+            <h2 className="text-xl font-bold text-white">Discover Circles</h2>
+            <p className="text-neutral-400 text-sm mt-1">
+              Open circles you can join
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {discoverable.map((circle) => (
+              <Link key={circle.id} href={`/circles/join/${circle.invite_code}`}>
+                <Card
+                  variant="glass"
+                  className="p-5 h-full hover:border-white/20 transition-colors cursor-pointer"
+                >
+                  <CardHeader className="p-0 mb-4">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-lg text-white">
+                        {circle.name}
+                      </CardTitle>
+                      <Badge variant="forming">Open</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-0 space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="text-neutral-500">Contribution</div>
+                        <div className="text-white font-medium">
+                          {formatCurrency(circle.contribution_amount)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-neutral-500">Members</div>
+                        <div className="text-white font-medium">
+                          {circle.current_members} / {circle.member_count}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pt-3 border-t border-white/10">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-500">Organized by</span>
+                        <span className="text-white font-medium">
+                          {circle.organizer_name}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="pt-3 border-t border-white/10 text-center">
+                      <span className="text-sm text-blue-400 font-medium">
+                        {circle.member_count - circle.current_members} spots remaining — Join now
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
