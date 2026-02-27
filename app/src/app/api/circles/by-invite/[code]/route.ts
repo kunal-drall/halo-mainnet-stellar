@@ -82,12 +82,12 @@ export async function GET(
     // Get organizer name
     let creatorName = "Unknown";
     if (circle.organizer_id) {
-      const { data: organizer } = await supabase
-        .from("users")
+      const { data: organizer } = await (supabase
+        .from("users") as any)
         .select("name")
         .eq("id", circle.organizer_id)
         .single();
-      if (organizer) creatorName = organizer.name || "Unknown";
+      if (organizer) creatorName = (organizer as any).name || "Unknown";
     }
 
     const totalMembers = circle.member_count;
