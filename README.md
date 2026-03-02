@@ -801,10 +801,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Links
 
-- **Website:** [usehalo.fun](https://tryhalo.fun)
+- **Website:** [tryhalo.fun](https://tryhalo.fun)
 - **Twitter:** [@halodotfun](https://twitter.com/halodotfun)
 - **Telegram:** [t.me/kunaldrall](https://t.me/kunaldrall)
-- **GitHub:** [github.com/kunal-drall/halo](https://github.com/kunal-drall/halo-mainnet-stellar)
+- **GitHub:** [github.com/kunal-drall/halo-mainnet-stellar](https://github.com/kunal-drall/halo-mainnet-stellar)
 
 ---
 
