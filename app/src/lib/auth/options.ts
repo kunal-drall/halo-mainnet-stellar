@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { trackActivity } from "@/lib/analytics/track";
 
 // Type for user data from Supabase
 interface SupabaseUserData {
@@ -86,6 +87,16 @@ export const authOptions: NextAuthOptions = {
             console.error("[auth] Error creating user:", error);
             return false;
           }
+        }
+
+        // Track login activity (fire-and-forget)
+        const { data: loginUser } = await (supabase
+          .from("users") as any)
+          .select("id")
+          .eq("email", user.email!)
+          .maybeSingle();
+        if (loginUser) {
+          trackActivity((loginUser as any).id, "login");
         }
 
         return true;
