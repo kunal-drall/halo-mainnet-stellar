@@ -571,7 +571,7 @@ These wallets have been created and funded on Stellar Testnet for testing the Ha
 
 ### Demo Video
 
-📺 **[Watch the full demo walkthrough on Loom](https://www.loom.com/share/YOUR_VIDEO_ID)**
+📺 **[Watch the full demo walkthrough on Loom](https://www.loom.com/share/7915cc841d9440e2846b3593153d2f40)**
 
 *Video demonstrates: User signup → Wallet connection → Circle creation → Credit scoring*
 
