@@ -5,6 +5,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { circleContract } from "@/lib/stellar/contracts/circle";
 import { identityContract } from "@/lib/stellar/contracts/identity";
 import { queryTokenBalance } from "@/lib/stellar/client";
+import { trackActivity } from "@/lib/analytics/track";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 // Type for user data from Supabase
 interface UserData {
@@ -32,6 +34,10 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Rate limit: 5 join attempts per minute
+  const rateLimited = applyRateLimit(req, "circles:join", 5, 60_000);
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -227,6 +233,9 @@ export async function POST(
         })
         .eq("id", circleId);
     }
+
+    // Track join activity
+    trackActivity(session.user.id, "join_circle", { circleId, payoutPosition });
 
     return NextResponse.json({
       message: "Successfully joined circle",
