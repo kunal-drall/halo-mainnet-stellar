@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { trackActivity } from "@/lib/analytics/track";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 // Type for circle data from Supabase
 interface CircleData {
@@ -51,6 +53,10 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Rate limit: 10 contribution attempts per minute
+  const rateLimited = applyRateLimit(req, "circles:contribute", 10, 60_000);
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -179,6 +185,14 @@ export async function POST(
     if ((contributionCount || 0) >= circle.member_count) {
       await processPayout(supabase, circle);
     }
+
+    // Track contribution activity
+    trackActivity(session.user.id, "contribute", {
+      circleId,
+      period: circle.current_period,
+      amount: amount || circle.contribution_amount,
+      isLate,
+    });
 
     return NextResponse.json({
       message: "Contribution recorded successfully",
