@@ -6,6 +6,8 @@ import { circleContract, CircleConfig } from "@/lib/stellar/contracts/circle";
 import { identityContract } from "@/lib/stellar/contracts/identity";
 import { queryTokenBalance, USDC_CONTRACT_ADDRESS } from "@/lib/stellar/client";
 import { z } from "zod";
+import { trackActivity } from "@/lib/analytics/track";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 // Type for user data
 interface UserData {
@@ -115,6 +117,10 @@ export async function GET(req: NextRequest) {
  * Create a new circle
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 circle creations per minute
+  const rateLimited = applyRateLimit(req, "circles:create", 5, 60_000);
+  if (rateLimited) return rateLimited;
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -292,6 +298,9 @@ export async function POST(req: NextRequest) {
     if (membershipError) {
       console.error("Error adding organizer as member:", membershipError);
     }
+
+    // Track circle creation
+    trackActivity(session.user.id, "create_circle", { circleId: circle.id, name: input.name });
 
     return NextResponse.json(
       {
