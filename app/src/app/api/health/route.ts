@@ -1,29 +1,21 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rpc } from "@stellar/stellar-sdk";
+import { isSponsorshipEnabled, getSponsorPublicKey } from "@/lib/stellar/sponsor";
 
 export async function GET() {
   const checks: Record<string, string> = {};
+  const startTime = Date.now();
 
   // Check env vars are present (not their values)
   checks.NEXTAUTH_URL = process.env.NEXTAUTH_URL ? "set" : "MISSING";
   checks.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET ? "set" : "MISSING";
   checks.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ? "set" : "MISSING";
-  checks.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
-    ? "set"
-    : "MISSING";
-  checks.NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-    ? "set"
-    : "MISSING";
-  checks.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? "set"
-    : "MISSING";
-  checks.CIRCLE_CONTRACT_ADDRESS = process.env.CIRCLE_CONTRACT_ADDRESS
-    ? "set"
-    : "MISSING (using default)";
-  checks.SOROBAN_RPC_URL = process.env.SOROBAN_RPC_URL
-    ? "set"
-    : "MISSING (using default)";
+  checks.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ? "set" : "MISSING";
+  checks.NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ? "set" : "MISSING";
+  checks.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ? "set" : "MISSING";
+  checks.CIRCLE_CONTRACT_ADDRESS = process.env.CIRCLE_CONTRACT_ADDRESS ? "set" : "MISSING (using default)";
+  checks.SOROBAN_RPC_URL = process.env.SOROBAN_RPC_URL ? "set" : "MISSING (using default)";
 
   // Test Supabase connection
   try {
@@ -51,12 +43,42 @@ export async function GET() {
     checks.soroban = `error: ${err instanceof Error ? err.message : String(err)}`;
   }
 
+  // Check fee sponsorship status
+  checks.feeSponsorship = isSponsorshipEnabled()
+    ? `enabled (sponsor: ${getSponsorPublicKey()?.slice(0, 8)}...)`
+    : "disabled (SPONSOR_SECRET_KEY not set)";
+
+  // Check metrics freshness
+  try {
+    const supabase = createAdminClient();
+    const { data: latestMetric } = await (supabase.from("platform_metrics") as any)
+      .select("date, created_at")
+      .order("date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (latestMetric) {
+      checks.metricsSnapshot = `last: ${latestMetric.date}`;
+    } else {
+      checks.metricsSnapshot = "no snapshots yet";
+    }
+  } catch {
+    checks.metricsSnapshot = "unavailable";
+  }
+
+  const responseTime = Date.now() - startTime;
+
   const allOk = !Object.values(checks).some(
     (v) => v.startsWith("error") || v.startsWith("exception") || v === "MISSING"
   );
 
   return NextResponse.json(
-    { status: allOk ? "healthy" : "unhealthy", checks },
+    {
+      status: allOk ? "healthy" : "unhealthy",
+      responseTimeMs: responseTime,
+      version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
+      checks,
+    },
     { status: allOk ? 200 : 500 }
   );
 }
