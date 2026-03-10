@@ -120,3 +120,19 @@ export function applyRateLimit(
 
   return null;
 }
+
+/**
+ * Get the number of active rate limit entries (for monitoring).
+ */
+export function getRateLimitStoreSize(): number {
+  return store.size;
+}
+
+/**
+ * Reset rate limit store. Only for testing.
+ */
+export function resetRateLimitStore(): void {
+  if (process.env.NODE_ENV === "test") {
+    store.clear();
+  }
+}
