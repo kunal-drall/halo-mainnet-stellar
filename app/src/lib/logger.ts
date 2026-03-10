@@ -4,8 +4,13 @@ interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
+  service: string;
+  environment: string;
   [key: string]: unknown;
 }
+
+const SERVICE_NAME = process.env.SERVICE_NAME || "halo-app";
+const ENVIRONMENT = process.env.NODE_ENV || "development";
 
 /**
  * Structured JSON logger for production observability.
@@ -20,6 +25,8 @@ function createLogEntry(
     timestamp: new Date().toISOString(),
     level,
     message,
+    service: SERVICE_NAME,
+    environment: ENVIRONMENT,
     ...context,
   };
 }
