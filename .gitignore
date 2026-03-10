@@ -24,6 +24,14 @@ Thumbs.db
 **/*.rs.bk
 Cargo.lock
 
+# Demo wallet secrets
+scripts/wallets/
+scripts/demo-workflow.ts
+app/scripts/
+
+# Supabase local
+app/supabase/.temp/
+
 # Environment
 .env
 .env.local
