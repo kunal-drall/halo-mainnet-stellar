@@ -60,25 +60,34 @@ export default function MetricsDashboardPage() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function fetchMetrics(showRefresh = false) {
+    try {
+      if (showRefresh) setRefreshing(true);
+      const res = await fetch("/api/admin/metrics");
+      if (res.status === 403) {
+        setError("You don't have permission to view this page.");
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to fetch metrics");
+      const data = await res.json();
+      setMetrics(data);
+      setLastRefresh(new Date());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchMetrics() {
-      try {
-        const res = await fetch("/api/admin/metrics");
-        if (res.status === 403) {
-          setError("You don't have permission to view this page.");
-          return;
-        }
-        if (!res.ok) throw new Error("Failed to fetch metrics");
-        const data = await res.json();
-        setMetrics(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchMetrics();
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(() => fetchMetrics(), 60_000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -113,9 +122,25 @@ export default function MetricsDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">Platform Metrics</h1>
-        <p className="text-neutral-400 mt-1">Real-time analytics and user activity</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Platform Metrics</h1>
+          <p className="text-neutral-400 mt-1">
+            Real-time analytics and user activity
+            {lastRefresh && (
+              <span className="ml-2 text-neutral-500 text-xs">
+                Updated {timeAgo(lastRefresh.toISOString())}
+              </span>
+            )}
+          </p>
+        </div>
+        <button
+          onClick={() => fetchMetrics(true)}
+          disabled={refreshing}
+          className="px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/20 transition-colors disabled:opacity-50"
+        >
+          {refreshing ? "Refreshing..." : "Refresh"}
+        </button>
       </div>
 
       {/* Overview Stats */}
