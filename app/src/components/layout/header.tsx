@@ -40,6 +40,12 @@ export function Header() {
               How It Works
             </Link>
             <Link
+              href="/explorer"
+              className="text-sm text-neutral-400 hover:text-white transition-colors"
+            >
+              Explorer
+            </Link>
+            <Link
               href="/about"
               className="text-sm text-neutral-400 hover:text-white transition-colors"
             >
