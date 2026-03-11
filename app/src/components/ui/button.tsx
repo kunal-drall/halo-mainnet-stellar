@@ -23,16 +23,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F1A] disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-medium transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A843] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080B12] disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary:
-        "bg-white text-[#0B0F1A] hover:bg-neutral-200 active:bg-neutral-300",
+        "bg-[#EDEDED] text-[#080B12] hover:bg-white active:bg-neutral-200",
       outline:
-        "bg-transparent border border-white/30 text-white hover:bg-white/5 active:bg-white/10",
+        "bg-transparent border border-white/[0.12] text-[#EDEDED] hover:bg-white/[0.04] active:bg-white/[0.08]",
       ghost:
-        "bg-transparent text-neutral-400 hover:text-white active:text-white/80",
-      link: "bg-transparent text-white underline-offset-4 hover:underline",
+        "bg-transparent text-[#787E88] hover:text-[#EDEDED] active:text-[#EDEDED]/80",
+      link: "bg-transparent text-[#EDEDED] underline-offset-4 hover:underline",
     };
 
     const sizes = {
