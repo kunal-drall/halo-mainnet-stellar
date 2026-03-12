@@ -2,9 +2,6 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
   title: "Dashboard - Halo Protocol",
@@ -24,6 +21,15 @@ export default async function DashboardPage() {
   let activeCircles = 0;
   let pendingActions = 0;
   let hasWallet = false;
+  let userCircles: Array<{
+    id: string;
+    name: string;
+    status: string;
+    contribution_amount: number;
+    member_count: number;
+    current_period: number | null;
+    position?: number;
+  }> = [];
 
   if (session?.user?.id) {
     // Get user's wallet status from database (not session, which may be stale)
@@ -50,7 +56,7 @@ export default async function DashboardPage() {
     // Get user's active circles count
     const { data: memberships } = await supabase
       .from("memberships")
-      .select("circle_id")
+      .select("circle_id, payout_position")
       .eq("user_id", session.user.id);
 
     if (memberships) {
@@ -59,10 +65,17 @@ export default async function DashboardPage() {
       if (circleIds.length > 0) {
         const { data: circles } = await supabase
           .from("circles")
-          .select("id, status")
+          .select("id, name, status, contribution_amount, member_count, current_period")
           .in("id", circleIds)
           .in("status", ["active", "forming"]);
         activeCircles = circles?.length || 0;
+        userCircles = (circles || []).map((c: any) => {
+          const membership = memberships.find((m: any) => m.circle_id === c.id);
+          return {
+            ...c,
+            position: (membership as any)?.payout_position,
+          };
+        });
       }
     }
 
@@ -76,204 +89,313 @@ export default async function DashboardPage() {
     pendingActions = count || 0;
   }
 
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const tierColor =
+    creditScore >= 700
+      ? "text-[#2DD4A0]"
+      : creditScore >= 500
+        ? "text-[#D4A843]"
+        : "text-[#787E88]";
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount / 10_000_000);
+  };
+
+  const statusBadge = (status: string) => {
+    const colors: Record<string, string> = {
+      forming: "bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/20",
+      active: "bg-[#2DD4A0]/10 text-[#2DD4A0] border-[#2DD4A0]/20",
+      completed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    };
+    return colors[status] || "bg-white/5 text-[#787E88] border-white/10";
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Wallet Connection Banner */}
       {!hasWallet && (
-        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+        <div className="animate-in p-4 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-xl">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[#D4A843] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <div>
-                <p className="text-yellow-400 font-medium text-sm">Connect your wallet</p>
-                <p className="text-yellow-400/70 text-xs">Link a Freighter wallet to participate in circles</p>
+                <p className="text-[#D4A843] font-medium text-sm">Connect your wallet</p>
+                <p className="text-[#D4A843]/70 text-xs">Link a Freighter wallet to participate in circles</p>
               </div>
             </div>
-            <Link href="/onboarding/wallet">
-              <Button size="sm">Connect Wallet</Button>
+            <Link
+              href="/onboarding/wallet"
+              className="shrink-0 px-4 py-2 bg-[#D4A843] text-[#080B12] text-sm font-semibold rounded-lg hover:bg-[#D4A843]/90 transition-colors"
+            >
+              Connect Wallet
             </Link>
           </div>
         </div>
       )}
 
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">
-          Welcome back, {session?.user?.name?.split(" ")[0] || "User"}
+      {/* Page Header */}
+      <div className="animate-in delay-1">
+        <h1
+          className="text-2xl font-bold text-[#EDEDED]"
+          style={{ fontFamily: "var(--font-display), sans-serif" }}
+        >
+          Dashboard
         </h1>
-        <p className="text-neutral-400 mt-1">
-          Here's an overview of your credit journey
+        <p className="text-[#787E88] text-sm mt-1" style={{ fontFamily: "var(--font-mono), monospace" }}>
+          {dateStr}
         </p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Credit Score Card */}
-        <Card variant="glass" className="md:col-span-1">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-neutral-400">Credit Score</span>
-              <Badge variant={tier as any}>{tier}</Badge>
-            </div>
-            <div className="flex items-end gap-2">
-              <span className="text-4xl font-bold text-white">{creditScore}</span>
-              <span className="text-sm text-neutral-500 mb-1">/ 850</span>
-            </div>
-            <div className="mt-4">
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-500"
-                  style={{ width: `${((creditScore - 300) / 550) * 100}%` }}
-                />
-              </div>
-              <div className="flex justify-between mt-2 text-xs text-neutral-500">
-                <span>300</span>
-                <span>850</span>
-              </div>
-            </div>
-            <Link href="/credit" className="block mt-4">
-              <Button variant="ghost" size="sm" className="w-full">
-                View Details →
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      {/* Key Metrics Row */}
+      <div className="animate-in delay-2 flex flex-col sm:flex-row items-stretch">
+        {/* Credit Score */}
+        <div className="flex-1 py-4 sm:pr-6">
+          <p className="text-[10px] uppercase tracking-widest text-[#545963] mb-1">Credit Score</p>
+          <p className={`text-3xl font-bold ${tierColor}`} style={{ fontFamily: "var(--font-mono), monospace" }}>
+            {creditScore}
+          </p>
+          <p className="text-xs text-[#787E88] mt-0.5 capitalize">{tier}</p>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden sm:block w-px bg-white/[0.06] self-stretch" />
+        <div className="sm:hidden h-px bg-white/[0.06] w-full" />
 
         {/* Active Circles */}
-        <Card variant="glass">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-neutral-400">Active Circles</span>
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-white">{activeCircles}</div>
-            <p className="text-sm text-neutral-500 mt-1">circle{activeCircles !== 1 ? "s" : ""} in progress</p>
-            <Link href="/circles" className="block mt-4">
-              <Button variant="ghost" size="sm" className="w-full">
-                View Circles →
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="flex-1 py-4 sm:px-6">
+          <p className="text-[10px] uppercase tracking-widest text-[#545963] mb-1">Active Circles</p>
+          <p className="text-3xl font-bold text-[#EDEDED]" style={{ fontFamily: "var(--font-mono), monospace" }}>
+            {activeCircles}
+          </p>
+          <p className="text-xs text-[#787E88] mt-0.5">circles</p>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden sm:block w-px bg-white/[0.06] self-stretch" />
+        <div className="sm:hidden h-px bg-white/[0.06] w-full" />
 
         {/* Pending Actions */}
-        <Card variant="glass">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-neutral-400">Pending Actions</span>
-              {pendingActions > 0 && (
-                <span className="w-6 h-6 rounded-full bg-yellow-500 text-black text-xs font-bold flex items-center justify-center">
-                  {pendingActions}
-                </span>
-              )}
-            </div>
-            <div className="text-3xl font-bold text-white">{pendingActions}</div>
-            <p className="text-sm text-neutral-500 mt-1">
-              {pendingActions > 0 ? "payment(s) due" : "all caught up!"}
-            </p>
-            <Link href="/circles" className="block mt-4">
-              <Button variant="ghost" size="sm" className="w-full">
-                View Circles →
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="flex-1 py-4 sm:pl-6">
+          <p className="text-[10px] uppercase tracking-widest text-[#545963] mb-1">Pending</p>
+          <p className="text-3xl font-bold text-[#EDEDED]" style={{ fontFamily: "var(--font-mono), monospace" }}>
+            {pendingActions}
+          </p>
+          <p className="text-xs text-[#787E88] mt-0.5">{pendingActions > 0 ? "payments due" : "all clear"}</p>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card variant="glass">
-          <CardHeader>
-            <CardTitle className="text-lg">Create a Circle</CardTitle>
-            <CardDescription>
-              Start your own lending circle and invite friends
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/circles/create">
-              <Button className="w-full" disabled={!hasWallet}>
-                {hasWallet ? "Create Circle" : "Connect Wallet First"}
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="animate-in delay-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link
+          href="/circles/create"
+          className="group bg-[#0F1319] border border-white/[0.06] rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:border-white/[0.12]"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-[#D4A843]/10 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-[#D4A843]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-[#EDEDED] font-semibold" style={{ fontFamily: "var(--font-display), sans-serif" }}>
+                Create Circle
+              </h3>
+              <p className="text-[#545963] text-sm mt-0.5">Start a lending circle and invite friends</p>
+            </div>
+          </div>
+        </Link>
 
-        <Card variant="glass">
-          <CardHeader>
-            <CardTitle className="text-lg">Join a Circle</CardTitle>
-            <CardDescription>
-              Have an invite code? Join an existing circle
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/circles">
-              <Button variant="outline" className="w-full">
-                Browse Circles
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <Link
+          href="/circles/join"
+          className="group bg-[#0F1319] border border-white/[0.06] rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:border-white/[0.12]"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-[#D4A843]/10 flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-[#D4A843]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-[#EDEDED] font-semibold" style={{ fontFamily: "var(--font-display), sans-serif" }}>
+                Join Circle
+              </h3>
+              <p className="text-[#545963] text-sm mt-0.5">Enter an invite code to join an existing circle</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
-      {/* Getting Started Guide for new users */}
+      {/* Active Circles List */}
+      <div className="animate-in delay-4 space-y-4">
+        <div className="flex items-center gap-3">
+          <h2
+            className="text-lg font-semibold text-[#EDEDED]"
+            style={{ fontFamily: "var(--font-display), sans-serif" }}
+          >
+            Your Circles
+          </h2>
+          {userCircles.length > 0 && (
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-white/[0.06] text-[#787E88]">
+              {userCircles.length}
+            </span>
+          )}
+        </div>
+
+        {userCircles.length === 0 ? (
+          <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl p-8 text-center">
+            <p className="text-[#787E88] mb-4">
+              No circles yet. Create one or join with an invite code.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/circles/create"
+                className="px-5 py-2.5 bg-[#D4A843] text-[#080B12] text-sm font-semibold rounded-lg hover:bg-[#D4A843]/90 transition-colors"
+              >
+                Create Circle
+              </Link>
+              <Link
+                href="/circles/join"
+                className="px-5 py-2.5 border border-white/[0.12] text-[#EDEDED] text-sm font-semibold rounded-lg hover:bg-white/[0.04] transition-colors"
+              >
+                Join Circle
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {userCircles.map((circle) => (
+              <Link key={circle.id} href={`/circles/${circle.id}`}>
+                <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:border-white/[0.12] cursor-pointer">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div>
+                        <h3
+                          className="text-[#EDEDED] font-semibold truncate"
+                          style={{ fontFamily: "var(--font-display), sans-serif" }}
+                        >
+                          {circle.name}
+                        </h3>
+                        <div className="flex items-center gap-3 mt-1 text-sm text-[#787E88]">
+                          <span style={{ fontFamily: "var(--font-mono), monospace" }}>
+                            {formatCurrency(circle.contribution_amount)}
+                          </span>
+                          <span className="text-[#545963]">|</span>
+                          <span>{circle.member_count} members</span>
+                          {circle.position && (
+                            <>
+                              <span className="text-[#545963]">|</span>
+                              <span>Position #{circle.position}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize ${statusBadge(circle.status)}`}>
+                        {circle.status}
+                      </span>
+                      <svg className="w-4 h-4 text-[#545963]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Getting Started Guide */}
       {creditScore === 300 && activeCircles === 0 && (
-        <Card variant="glass">
-          <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
-            <CardDescription>Complete these steps to build your credit</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${hasWallet ? "bg-green-500/20 text-green-400" : "bg-white/10 text-neutral-400"}`}>
+        <div className="animate-in delay-5">
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer list-none">
+              <h2
+                className="text-lg font-semibold text-[#EDEDED]"
+                style={{ fontFamily: "var(--font-display), sans-serif" }}
+              >
+                Getting Started
+              </h2>
+              <svg className="w-4 h-4 text-[#545963] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+
+            {/* Progress bar */}
+            <div className="mt-4 mb-5">
+              <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#D4A843] rounded-full transition-all duration-500"
+                  style={{ width: `${(hasWallet ? 33 : 0)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {/* Step 1 */}
+              <div className="flex items-center gap-4 p-3 rounded-xl bg-[#0F1319]/50">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${hasWallet ? "bg-[#2DD4A0]/15 text-[#2DD4A0]" : "bg-white/[0.06] text-[#545963]"}`}>
                   {hasWallet ? (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   ) : (
-                    <span className="text-sm font-bold">1</span>
+                    <span className="text-xs font-bold">1</span>
                   )}
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Connect your wallet</p>
-                  <p className="text-xs text-neutral-400">Link a Stellar wallet to your account</p>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium ${hasWallet ? "text-[#2DD4A0]" : "text-[#EDEDED]"}`}>
+                    Connect Wallet
+                  </p>
+                  <p className="text-xs text-[#545963]">Link a Stellar wallet to your account</p>
                 </div>
                 {!hasWallet && (
-                  <Link href="/onboarding/wallet">
-                    <Button size="sm" variant="outline">Connect</Button>
+                  <Link href="/onboarding/wallet" className="text-xs text-[#D4A843] font-medium hover:underline shrink-0">
+                    Connect
                   </Link>
                 )}
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 text-neutral-400 flex items-center justify-center">
-                  <span className="text-sm font-bold">2</span>
+
+              {/* Step 2 */}
+              <div className="flex items-center gap-4 p-3 rounded-xl bg-[#0F1319]/50">
+                <div className="w-7 h-7 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0 text-[#545963]">
+                  <span className="text-xs font-bold">2</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Join or create a circle</p>
-                  <p className="text-xs text-neutral-400">Start participating in lending circles</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[#EDEDED]">Join or create a circle</p>
+                  <p className="text-xs text-[#545963]">Start participating in lending circles</p>
                 </div>
-                <Link href="/circles">
-                  <Button size="sm" variant="outline">Browse</Button>
+                <Link href="/circles" className="text-xs text-[#D4A843] font-medium hover:underline shrink-0">
+                  Browse
                 </Link>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 text-neutral-400 flex items-center justify-center">
-                  <span className="text-sm font-bold">3</span>
+
+              {/* Step 3 */}
+              <div className="flex items-center gap-4 p-3 rounded-xl bg-[#0F1319]/50">
+                <div className="w-7 h-7 rounded-lg bg-white/[0.06] flex items-center justify-center shrink-0 text-[#545963]">
+                  <span className="text-xs font-bold">3</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Make on-time payments</p>
-                  <p className="text-xs text-neutral-400">Build your credit score with each payment</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[#EDEDED]">Make on-time payments</p>
+                  <p className="text-xs text-[#545963]">Build your credit score with each payment</p>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </details>
+        </div>
       )}
     </div>
   );
