@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { signTransaction } from "@stellar/freighter-api";
 
 interface FormData {
@@ -37,7 +34,7 @@ export default function CreateCirclePage() {
 
   function getDefaultStartDate() {
     const date = new Date();
-    date.setDate(date.getDate() + 7); // Default to 7 days from now
+    date.setDate(date.getDate() + 7);
     return date.toISOString().split("T")[0];
   }
 
@@ -95,6 +92,8 @@ export default function CreateCirclePage() {
       setStep(2);
     } else if (step === 2 && validateStep2()) {
       setStep(3);
+    } else if (step === 3 && validateStep3()) {
+      setStep(4);
     }
   };
 
@@ -110,7 +109,6 @@ export default function CreateCirclePage() {
     setError(null);
 
     try {
-      // Step 1: Create circle in database and get transaction XDR
       const response = await fetch("/api/circles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -124,9 +122,7 @@ export default function CreateCirclePage() {
 
       const data = await response.json();
 
-      // Handle identity binding requirement (status 428)
       if (response.status === 428 && data.requiresIdentityBinding && data.identityTransactionXdr) {
-        // Sign identity binding transaction first
         const identitySignResult = await signTransaction(data.identityTransactionXdr, {
           networkPassphrase: "Test SDF Network ; September 2015",
         });
@@ -135,7 +131,6 @@ export default function CreateCirclePage() {
           throw new Error("Identity binding cancelled. This is required before creating a circle.");
         }
 
-        // Submit identity binding transaction
         const identitySubmitResponse = await fetch("/api/stellar/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -147,7 +142,6 @@ export default function CreateCirclePage() {
           throw new Error(identityError.error || "Failed to bind identity on-chain");
         }
 
-        // Retry circle creation now that identity is bound
         const retryResponse = await fetch("/api/circles", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -164,13 +158,11 @@ export default function CreateCirclePage() {
           throw new Error(retryData.error || "Failed to create circle after identity binding");
         }
 
-        // Use the retry response data
         Object.assign(data, await retryResponse.json());
       } else if (!response.ok) {
         throw new Error(data.error || "Failed to create circle");
       }
 
-      // Step 2: Sign the on-chain transaction with Freighter (mandatory)
       if (!data.transactionXdr) {
         throw new Error("Server did not return a transaction to sign");
       }
@@ -183,7 +175,6 @@ export default function CreateCirclePage() {
         throw new Error("Transaction signing was cancelled. Circle creation requires an on-chain transaction.");
       }
 
-      // Step 3: Submit the signed transaction to Stellar
       const submitResponse = await fetch("/api/stellar/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -203,7 +194,7 @@ export default function CreateCirclePage() {
         inviteLink: data.inviteLink || `${window.location.origin}/circles/join/${data.inviteCode}`,
         onChainTxHash: submitData.hash,
       });
-      setStep(4); // Success step
+      setStep(5);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -229,27 +220,32 @@ export default function CreateCirclePage() {
 
   const totalPoolSize = formData.contributionAmount * formData.memberCount;
 
-  // Success state (step 4)
-  if (step === 4 && createResult) {
+  const stepLabels = ["Name", "Amount", "Settings", "Review"];
+
+  // Success state (step 5)
+  if (step === 5 && createResult) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <Card variant="glass" className="p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
-            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="max-w-lg mx-auto">
+        <div className="card-base p-8 text-center">
+          {/* Checkmark */}
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#2DD4A0]/15 flex items-center justify-center">
+            <svg className="w-8 h-8 text-[#2DD4A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
 
-          <h1 className="text-2xl font-bold text-white mb-2">Circle Created!</h1>
-          <p className="text-neutral-400 mb-8">
-            Share the invite code with your friends to join "{createResult.circle.name}"
+          <h1 className="text-2xl font-[family-name:var(--font-display)] text-[#EDEDED] mb-2">
+            Circle Created!
+          </h1>
+          <p className="text-[#787E88] text-sm mb-8">
+            Share the invite code with your friends to join &ldquo;{createResult.circle.name}&rdquo;
           </p>
 
           {/* Invite Code */}
           <div className="mb-6">
-            <p className="text-sm text-neutral-400 mb-2">Invite Code</p>
-            <div className="bg-white/5 rounded-xl p-6">
-              <p className="text-3xl font-mono font-bold text-white tracking-wider">
+            <p className="text-sm text-[#787E88] mb-2">Invite Code</p>
+            <div className="card-raised p-6">
+              <p className="text-3xl font-mono font-bold text-[#EDEDED] tracking-wider">
                 {createResult.inviteCode}
               </p>
             </div>
@@ -257,48 +253,40 @@ export default function CreateCirclePage() {
 
           {/* Copy Buttons */}
           <div className="flex gap-3 mb-8">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={copyInviteCode}
-            >
+            <button className="btn btn-outline flex-1" onClick={copyInviteCode}>
               {copied ? (
                 <>
-                  <svg className="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[#2DD4A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   Copied!
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                   Copy Code
                 </>
               )}
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={copyInviteLink}
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </button>
+            <button className="btn btn-outline flex-1" onClick={copyInviteLink}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
               </svg>
               Copy Link
-            </Button>
+            </button>
           </div>
 
           {/* Info Box */}
-          <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-8 text-left">
+          <div className="p-4 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-xl mb-8 text-left">
             <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[#D4A843] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-blue-400 font-medium text-sm">What's next?</p>
-                <p className="text-blue-400/70 text-sm mt-1">
+                <p className="text-[#D4A843] font-medium text-sm">What&apos;s next?</p>
+                <p className="text-[#D4A843]/70 text-sm mt-1">
                   Share the invite code with {formData.memberCount - 1} friends. Once all members join, the circle will automatically start on {new Date(formData.startDate).toLocaleDateString()}.
                 </p>
               </div>
@@ -307,322 +295,297 @@ export default function CreateCirclePage() {
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex-1"
+            <button
+              className="btn btn-outline flex-1"
               onClick={() => router.push("/circles")}
             >
               Back to Circles
-            </Button>
-            <Button
-              className="flex-1"
+            </button>
+            <button
+              className="btn btn-accent flex-1"
               onClick={() => router.push(`/circles/${createResult.circle.id}`)}
             >
               View Circle
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-lg mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={() => router.push("/circles")}
-          className="mb-4 p-0 h-auto"
+          className="btn btn-ghost btn-sm mb-4 px-0"
         >
-          <svg
-            className="w-5 h-5 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back to Circles
-        </Button>
-        <h1 className="text-2xl font-bold text-white">Create a Circle</h1>
-        <p className="text-neutral-400 mt-1">
+        </button>
+        <h1 className="text-2xl font-[family-name:var(--font-display)] text-[#EDEDED]">
+          Create a Circle
+        </h1>
+        <p className="text-[#787E88] text-sm mt-1">
           Set up a new lending circle for your community
         </p>
       </div>
 
-      {/* Progress Steps */}
-      <div className="flex items-center justify-center mb-8">
-        {[1, 2, 3].map((s) => (
-          <div key={s} className="flex items-center">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                s === step
-                  ? "bg-white text-black"
-                  : s < step
-                  ? "bg-green-500 text-white"
-                  : "bg-white/10 text-neutral-400"
-              }`}
-            >
-              {s < step ? (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+      {/* Step Indicator */}
+      <div className="flex items-center justify-center mb-8 gap-1">
+        {stepLabels.map((label, i) => {
+          const s = i + 1;
+          return (
+            <div key={s} className="flex items-center">
+              <div className="flex flex-col items-center gap-1">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+                    s === step
+                      ? "bg-[#D4A843] text-[#080B12]"
+                      : s < step
+                      ? "bg-[#2DD4A0] text-[#080B12]"
+                      : "bg-[#161B24] text-[#545963] border border-white/[0.06]"
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              ) : (
-                s
+                  {s < step ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    s
+                  )}
+                </div>
+                <span className={`text-xs ${s === step ? "text-[#D4A843]" : "text-[#545963]"}`}>
+                  {label}
+                </span>
+              </div>
+              {s < 4 && (
+                <div
+                  className={`w-10 h-0.5 mx-1.5 mb-4 ${
+                    s < step ? "bg-[#2DD4A0]" : "bg-white/[0.06]"
+                  }`}
+                />
               )}
             </div>
-            {s < 3 && (
-              <div
-                className={`w-16 h-0.5 mx-2 ${
-                  s < step ? "bg-green-500" : "bg-white/10"
-                }`}
-              />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Form Card */}
-      <Card variant="glass" className="p-6">
+      <div className="card-base p-6">
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-            {error}
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-400 text-xs">{error}</p>
           </div>
         )}
 
-        {/* Step 1: Basic Info */}
+        {/* Step 1: Name */}
         {step === 1 && (
-          <>
-            <CardHeader className="p-0 mb-6">
-              <CardTitle className="text-lg text-white">
-                Name Your Circle
-              </CardTitle>
-              <p className="text-neutral-400 text-sm mt-1">
-                Choose a memorable name for your lending circle
-              </p>
-            </CardHeader>
-            <CardContent className="p-0 space-y-6">
-              <Input
-                label="Circle Name"
+          <div>
+            <h2 className="text-lg font-[family-name:var(--font-display)] text-[#EDEDED] mb-1">
+              Name Your Circle
+            </h2>
+            <p className="text-[#787E88] text-sm mb-6">
+              Choose a memorable name for your lending circle
+            </p>
+            <div className="space-y-2">
+              <label className="text-sm text-[#787E88]">Circle Name</label>
+              <input
+                className="input"
                 placeholder="e.g., Family Savings, Friends Fund"
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
-                hint="3-30 characters"
               />
-            </CardContent>
-          </>
+              <p className="text-xs text-[#545963]">3-30 characters</p>
+            </div>
+          </div>
         )}
 
-        {/* Step 2: Parameters */}
+        {/* Step 2: Contribution Amount */}
         {step === 2 && (
-          <>
-            <CardHeader className="p-0 mb-6">
-              <CardTitle className="text-lg text-white">
-                Set Parameters
-              </CardTitle>
-              <p className="text-neutral-400 text-sm mt-1">
-                Define contribution amounts and member count
-              </p>
-            </CardHeader>
-            <CardContent className="p-0 space-y-6">
-              <Input
-                type="number"
-                label="Contribution Amount (USD)"
-                placeholder="50"
-                value={formData.contributionAmount}
-                onChange={(e) =>
-                  handleInputChange(
-                    "contributionAmount",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-                hint="$10 - $500 per period"
-              />
+          <div>
+            <h2 className="text-lg font-[family-name:var(--font-display)] text-[#EDEDED] mb-1">
+              Set Contribution
+            </h2>
+            <p className="text-[#787E88] text-sm mb-6">
+              Define contribution amounts and frequency
+            </p>
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-sm text-[#787E88]">Contribution Amount (USD)</label>
+                <input
+                  type="number"
+                  className="input"
+                  placeholder="50"
+                  value={formData.contributionAmount}
+                  onChange={(e) =>
+                    handleInputChange("contributionAmount", parseInt(e.target.value) || 0)
+                  }
+                />
+                <p className="text-xs text-[#545963]">$10 - $500 per period</p>
+              </div>
+            </div>
+          </div>
+        )}
 
-              <Input
-                type="number"
-                label="Number of Members"
-                placeholder="5"
-                value={formData.memberCount}
-                onChange={(e) =>
-                  handleInputChange(
-                    "memberCount",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-                hint="3 - 10 members"
-              />
+        {/* Step 3: Member Count + Settings */}
+        {step === 3 && (
+          <div>
+            <h2 className="text-lg font-[family-name:var(--font-display)] text-[#EDEDED] mb-1">
+              Members &amp; Settings
+            </h2>
+            <p className="text-[#787E88] text-sm mb-6">
+              Set member count and start date
+            </p>
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-sm text-[#787E88]">Number of Members</label>
+                <input
+                  type="number"
+                  className="input"
+                  placeholder="5"
+                  value={formData.memberCount}
+                  onChange={(e) =>
+                    handleInputChange("memberCount", parseInt(e.target.value) || 0)
+                  }
+                />
+                <p className="text-xs text-[#545963]">3 - 10 members</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm text-[#787E88]">Start Date</label>
+                <input
+                  type="date"
+                  className="input"
+                  value={formData.startDate}
+                  onChange={(e) => handleInputChange("startDate", e.target.value)}
+                />
+                <p className="text-xs text-[#545963]">At least 3 days from today</p>
+              </div>
 
               {/* Preview */}
-              <div className="p-4 bg-white/5 rounded-lg">
-                <h4 className="text-sm font-medium text-white mb-3">
-                  Circle Preview
-                </h4>
+              <div className="card-raised p-4">
+                <h4 className="text-sm font-medium text-[#EDEDED] mb-3">Circle Preview</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <div className="text-neutral-500">Pool Size</div>
-                    <div className="text-white font-medium">
-                      ${totalPoolSize.toLocaleString()}
-                    </div>
+                    <div className="text-[#545963] text-xs">Pool Size</div>
+                    <div className="text-[#EDEDED] font-medium">${totalPoolSize.toLocaleString()}</div>
                   </div>
                   <div>
-                    <div className="text-neutral-500">Duration</div>
-                    <div className="text-white font-medium">
-                      {formData.memberCount} months
-                    </div>
+                    <div className="text-[#545963] text-xs">Duration</div>
+                    <div className="text-[#EDEDED] font-medium">{formData.memberCount} months</div>
                   </div>
                   <div>
-                    <div className="text-neutral-500">Escrow Required</div>
-                    <div className="text-white font-medium">
-                      ${formData.contributionAmount} USDC
-                    </div>
+                    <div className="text-[#545963] text-xs">Escrow Required</div>
+                    <div className="text-[#EDEDED] font-medium">${formData.contributionAmount} USDC</div>
                   </div>
                   <div>
-                    <div className="text-neutral-500">Collateral</div>
-                    <div className="text-emerald-400 font-medium">
-                      100%
-                    </div>
+                    <div className="text-[#545963] text-xs">Collateral</div>
+                    <div className="text-[#2DD4A0] font-medium">100%</div>
                   </div>
                 </div>
               </div>
 
-              {/* Escrow Info */}
-              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="p-3 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-lg">
                 <div className="flex items-start gap-2">
-                  <svg className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[#D4A843] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-blue-400/80 text-xs">
+                  <p className="text-[#D4A843]/80 text-xs">
                     Each member deposits ${formData.contributionAmount} USDC as escrow (100% collateral) when joining. This protects all members and is returned after circle completion.
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </>
+            </div>
+          </div>
         )}
 
-        {/* Step 3: Review */}
-        {step === 3 && (
-          <>
-            <CardHeader className="p-0 mb-6">
-              <CardTitle className="text-lg text-white">
-                Review & Create
-              </CardTitle>
-              <p className="text-neutral-400 text-sm mt-1">
-                Confirm your circle details and set the start date
-              </p>
-            </CardHeader>
-            <CardContent className="p-0 space-y-6">
-              <Input
-                type="date"
-                label="Start Date"
-                value={formData.startDate}
-                onChange={(e) => handleInputChange("startDate", e.target.value)}
-                hint="At least 3 days from today"
-              />
+        {/* Step 4: Review */}
+        {step === 4 && (
+          <div>
+            <h2 className="text-lg font-[family-name:var(--font-display)] text-[#EDEDED] mb-1">
+              Review &amp; Confirm
+            </h2>
+            <p className="text-[#787E88] text-sm mb-6">
+              Confirm your circle details before creating
+            </p>
 
-              {/* Summary */}
-              <div className="p-4 bg-white/5 rounded-lg space-y-4">
-                <h4 className="text-sm font-medium text-white">
-                  Circle Summary
-                </h4>
-                <div className="space-y-3 text-sm">
+            <div className="card-raised p-4 space-y-3">
+              <h4 className="text-sm font-medium text-[#EDEDED]">Circle Summary</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Name</span>
+                  <span className="text-[#EDEDED] font-medium">{formData.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Contribution</span>
+                  <span className="text-[#EDEDED] font-medium">${formData.contributionAmount}/month</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Members</span>
+                  <span className="text-[#EDEDED] font-medium">{formData.memberCount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Pool Size</span>
+                  <span className="text-[#EDEDED] font-medium">${totalPoolSize.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Duration</span>
+                  <span className="text-[#EDEDED] font-medium">{formData.memberCount} months</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#787E88]">Start Date</span>
+                  <span className="text-[#EDEDED] font-medium">
+                    {new Date(formData.startDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="border-t border-white/[0.06] pt-3 mt-3">
                   <div className="flex justify-between">
-                    <span className="text-neutral-400">Name</span>
-                    <span className="text-white font-medium">
-                      {formData.name}
-                    </span>
+                    <span className="text-[#787E88]">Escrow Deposit</span>
+                    <span className="text-[#2DD4A0] font-medium">${formData.contributionAmount} USDC</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Contribution</span>
-                    <span className="text-white font-medium">
-                      ${formData.contributionAmount}/month
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Members</span>
-                    <span className="text-white font-medium">
-                      {formData.memberCount}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Pool Size</span>
-                    <span className="text-white font-medium">
-                      ${totalPoolSize.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Duration</span>
-                    <span className="text-white font-medium">
-                      {formData.memberCount} months
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Start Date</span>
-                    <span className="text-white font-medium">
-                      {new Date(formData.startDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="border-t border-white/10 pt-3 mt-3">
-                    <div className="flex justify-between">
-                      <span className="text-neutral-400">Escrow Deposit</span>
-                      <span className="text-emerald-400 font-medium">
-                        ${formData.contributionAmount} USDC
-                      </span>
-                    </div>
-                    <p className="text-neutral-500 text-xs mt-1">
-                      100% collateral - returned after circle completion
-                    </p>
-                  </div>
+                  <p className="text-[#545963] text-xs mt-1">
+                    100% collateral - returned after circle completion
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                <p className="text-yellow-400 text-sm">
-                  As the organizer, you will receive payout position #1. An
-                  invite code will be generated for you to share with other
-                  members. Each member must deposit escrow when joining.
-                </p>
-              </div>
-            </CardContent>
-          </>
+            <div className="p-4 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-lg mt-5">
+              <p className="text-[#D4A843] text-sm">
+                As the organizer, you will receive payout position #1. An invite code will be generated for you to share with other members. Each member must deposit escrow when joining.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8 pt-6 border-t border-white/10">
-          <Button
-            variant="outline"
+        <div className="flex justify-between mt-8 pt-6 border-t border-white/[0.06]">
+          <button
+            className="btn btn-ghost"
             onClick={step === 1 ? () => router.push("/circles") : prevStep}
           >
             {step === 1 ? "Cancel" : "Back"}
-          </Button>
+          </button>
 
-          {step < 3 ? (
-            <Button onClick={nextStep}>Continue</Button>
+          {step < 4 ? (
+            <button className="btn btn-accent" onClick={nextStep}>
+              Next
+            </button>
           ) : (
-            <Button onClick={handleSubmit} disabled={loading}>
+            <button
+              className="btn btn-accent"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Create Circle"}
-            </Button>
+            </button>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
