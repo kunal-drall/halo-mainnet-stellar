@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth/options";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { WalletDisplay } from "@/components/layout/wallet-display";
+import { AppProviders } from "@/components/layout/app-providers";
 
 export default async function AppLayout({
   children,
@@ -35,7 +36,9 @@ export default async function AppLayout({
         </header>
 
         {/* Page Content */}
-        <div className="p-4 lg:p-8">{children}</div>
+        <div className="p-4 lg:p-8">
+          <AppProviders>{children}</AppProviders>
+        </div>
       </main>
 
       {/* Mobile Navigation */}
