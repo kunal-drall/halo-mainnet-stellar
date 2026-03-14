@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface UserProfile {
@@ -55,253 +53,223 @@ export default function SettingsPage() {
     return `${address.slice(0, 8)}...${address.slice(-8)}`;
   };
 
-  const getKycBadgeVariant = (status: string) => {
+  const getKycStatusConfig = (status: string) => {
     switch (status) {
       case "verified":
-        return "success";
+        return { label: "Verified", dotColor: "bg-[#2DD4A0]", bgColor: "bg-[#2DD4A0]/10", textColor: "text-[#2DD4A0]" };
       case "processing":
-        return "active";
+        return { label: "Processing", dotColor: "bg-[#D4A843]", bgColor: "bg-[#D4A843]/10", textColor: "text-[#D4A843]" };
       case "rejected":
-        return "error";
+        return { label: "Rejected", dotColor: "bg-[#E04040]", bgColor: "bg-[#E04040]/10", textColor: "text-[#E04040]" };
       default:
-        return "default";
+        return { label: "Not Started", dotColor: "bg-[#545963]", bgColor: "bg-white/5", textColor: "text-[#787E88]" };
     }
   };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div>
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-4 w-48 mt-2" />
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-        </div>
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <Skeleton className="h-10 w-32" />
+        <Skeleton className="h-48 rounded-2xl" />
+        <Skeleton className="h-48 rounded-2xl" />
+        <Skeleton className="h-32 rounded-2xl" />
       </div>
     );
   }
 
+  const kycConfig = getKycStatusConfig(profile?.kycStatus || "pending");
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">Settings</h1>
-        <p className="text-neutral-400 mt-1">Manage your account and wallet</p>
-      </div>
+      <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold text-[#EDEDED]">
+        Settings
+      </h1>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Profile Card */}
-        <Card variant="glass" className="p-6">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-lg text-white">Profile</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-                {profile?.profileImage ? (
-                  <img
-                    src={profile.profileImage}
-                    alt={profile.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold text-white">
-                    {profile?.name?.[0]?.toUpperCase() || "U"}
-                  </span>
-                )}
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-white">
-                  {profile?.name || "User"}
-                </h3>
-                <p className="text-neutral-400 text-sm">{profile?.email}</p>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-white/10 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-neutral-400 text-sm">Member Since</span>
-                <span className="text-white text-sm">
-                  {profile?.createdAt
-                    ? new Date(profile.createdAt).toLocaleDateString()
-                    : "-"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-neutral-400 text-sm">KYC Status</span>
-                <Badge variant={getKycBadgeVariant(profile?.kycStatus || "pending")}>
-                  {profile?.kycStatus || "pending"}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Wallet Card */}
-        <Card variant="glass" className="p-6">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-lg text-white">Wallet</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 space-y-6">
-            {profile?.walletAddress ? (
-              <>
-                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <div className="flex items-center gap-3 mb-3">
-                    <svg
-                      className="w-5 h-5 text-green-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                    <span className="text-green-400 font-medium">
-                      Wallet Connected
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-sm font-mono text-white bg-white/5 px-3 py-2 rounded">
-                      {truncateAddress(profile.walletAddress)}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(profile.walletAddress!)}
-                      className="shrink-0"
-                    >
-                      {copied ? (
-                        <svg
-                          className="w-4 h-4 text-green-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Bound At</span>
-                    <span className="text-white">
-                      {profile.walletBoundAt
-                        ? new Date(profile.walletBoundAt).toLocaleDateString()
-                        : "-"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Unique ID</span>
-                    <code className="text-white font-mono text-xs">
-                      {profile.uniqueId
-                        ? `${profile.uniqueId.slice(0, 8)}...`
-                        : "-"}
-                    </code>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                  <p className="text-yellow-400 text-xs">
-                    Wallet binding is permanent and cannot be changed. This
-                    ensures one identity per wallet for credit scoring.
-                  </p>
-                </div>
-              </>
+      {/* Profile Section */}
+      <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] p-6 md:p-8">
+        <div className="flex items-center gap-5">
+          {/* Avatar */}
+          <div className="w-16 h-16 rounded-full bg-[#D4A843]/20 flex items-center justify-center overflow-hidden shrink-0">
+            {profile?.profileImage ? (
+              <img
+                src={profile.profileImage}
+                alt={profile.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <>
-                <div className="p-4 bg-white/5 border border-white/10 rounded-lg text-center">
-                  <svg
-                    className="w-12 h-12 text-neutral-500 mx-auto mb-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    />
-                  </svg>
-                  <p className="text-neutral-400 text-sm mb-4">
-                    No wallet connected yet. Connect your Freighter wallet to
-                    participate in lending circles.
-                  </p>
-                  <Button
-                    onClick={() => router.push("/onboarding/wallet")}
-                    className="w-full"
-                  >
-                    Connect Wallet
-                  </Button>
-                </div>
-
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <p className="text-blue-400 text-xs">
-                    You need to connect a wallet to create or join lending
-                    circles and start building your credit score.
-                  </p>
-                </div>
-              </>
+              <span className="text-2xl font-bold text-[#D4A843] font-[family-name:var(--font-display)]">
+                {profile?.name?.[0]?.toUpperCase() || "U"}
+              </span>
             )}
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Name & Email */}
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold text-[#EDEDED] truncate">
+              {profile?.name || "User"}
+            </h2>
+            <p className="text-sm text-[#787E88] truncate">{profile?.email}</p>
+            <div className="flex items-center gap-1.5 mt-2">
+              <svg className="w-3.5 h-3.5 text-[#545963]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+              <span className="text-xs text-[#545963]">Connected with Google</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Danger Zone */}
-      <Card variant="glass" className="p-6 border-red-500/20">
-        <CardHeader className="p-0 mb-4">
-          <CardTitle className="text-lg text-red-400">Danger Zone</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <p className="text-neutral-400 text-sm mb-4">
-            These actions are irreversible. Please proceed with caution.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Button variant="outline" size="sm" disabled>
-              Export Data
-            </Button>
+      {/* Wallet Section */}
+      <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] p-6 md:p-8">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-[family-name:var(--font-display)] text-base font-semibold text-[#EDEDED]">
+            Wallet
+          </h3>
+          {profile?.walletAddress && (
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#2DD4A0]" />
+              <span className="text-xs text-[#2DD4A0]">Bound</span>
+            </div>
+          )}
+        </div>
+
+        {profile?.walletAddress ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <code className="flex-1 text-sm font-mono text-[#EDEDED] bg-[#161B24] px-4 py-3 rounded-xl border border-white/[0.06] truncate">
+                {truncateAddress(profile.walletAddress)}
+              </code>
+              <button
+                onClick={() => copyToClipboard(profile.walletAddress!)}
+                className="shrink-0 w-10 h-10 rounded-xl bg-[#161B24] border border-white/[0.06] flex items-center justify-center text-[#787E88] hover:text-[#EDEDED] transition-colors"
+              >
+                {copied ? (
+                  <svg className="w-4 h-4 text-[#2DD4A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-[#545963]">Bound on</span>
+              <span className="text-[#787E88]">
+                {profile.walletBoundAt
+                  ? new Date(profile.walletBoundAt).toLocaleDateString()
+                  : "--"}
+              </span>
+            </div>
+
+            {profile.uniqueId && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#545963]">Unique ID</span>
+                <code className="text-[#787E88] font-mono text-xs">
+                  {profile.uniqueId.slice(0, 8)}...
+                </code>
+              </div>
+            )}
+
+            <p className="text-[#545963] text-xs leading-relaxed pt-2 border-t border-white/[0.06]">
+              Wallet binding is permanent and cannot be changed. This ensures one identity per wallet for credit scoring.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#E08A40]/5 border border-[#E08A40]/10">
+              <svg className="w-5 h-5 text-[#E08A40] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <p className="text-sm text-[#E08A40]">
+                No wallet connected. Connect your Freighter wallet to participate in lending circles.
+              </p>
+            </div>
             <Button
-              variant="outline"
-              size="sm"
-              className="text-red-400 border-red-500/30 hover:bg-red-500/10"
-              disabled
+              onClick={() => router.push("/onboarding/wallet")}
+              className="w-full bg-[#D4A843] hover:bg-[#D4A843]/90 text-[#080B12] font-semibold rounded-xl h-11"
             >
-              Delete Account
+              Connect Wallet
             </Button>
           </div>
-          <p className="text-neutral-500 text-xs mt-3">
-            Account deletion is not available during beta.
+        )}
+      </div>
+
+      {/* KYC Section */}
+      <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] p-6 md:p-8">
+        <div className="flex items-center justify-between">
+          <h3 className="font-[family-name:var(--font-display)] text-base font-semibold text-[#EDEDED]">
+            KYC Verification
+          </h3>
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${kycConfig.bgColor}`}>
+            <div className={`w-1.5 h-1.5 rounded-full ${kycConfig.dotColor}`} />
+            <span className={`text-xs font-medium ${kycConfig.textColor}`}>
+              {kycConfig.label}
+            </span>
+          </div>
+        </div>
+
+        {profile?.kycStatus !== "verified" && profile?.kycStatus !== "processing" && (
+          <div className="mt-5">
+            <p className="text-sm text-[#545963] mb-4">
+              Complete identity verification to unlock full platform features and higher circle limits.
+            </p>
+            <Button
+              onClick={() => router.push("/onboarding/kyc")}
+              variant="outline"
+              className="border-white/[0.06] text-[#EDEDED] hover:bg-white/5 rounded-xl"
+            >
+              Start Verification
+            </Button>
+          </div>
+        )}
+
+        {profile?.kycStatus === "processing" && (
+          <p className="text-sm text-[#787E88] mt-4">
+            Your identity verification is being processed. This usually takes a few minutes.
           </p>
-        </CardContent>
-      </Card>
+        )}
+
+        {profile?.kycStatus === "verified" && (
+          <p className="text-sm text-[#545963] mt-4">
+            Your identity has been verified. You have full access to all platform features.
+          </p>
+        )}
+      </div>
+
+      {/* Account Section */}
+      <div className="bg-[#0F1319] border border-white/[0.06] rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_16px_rgba(0,0,0,0.15)] p-6 md:p-8">
+        <h3 className="font-[family-name:var(--font-display)] text-base font-semibold text-[#EDEDED] mb-5">
+          Account
+        </h3>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[#545963]">Member since</span>
+            <span className="text-[#787E88]">
+              {profile?.createdAt
+                ? new Date(profile.createdAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "--"}
+            </span>
+          </div>
+
+          <div className="pt-4 border-t border-white/[0.06]">
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="text-sm text-[#787E88] hover:text-[#E04040] transition-colors"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
