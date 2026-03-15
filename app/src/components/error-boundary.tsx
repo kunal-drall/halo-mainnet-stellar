@@ -61,15 +61,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <p className="text-neutral-400 text-sm">
               An unexpected error occurred. Please try refreshing the page.
             </p>
-            <button
-              onClick={() => {
-                this.setState({ hasError: false, error: null });
-                window.location.reload();
-              }}
-              className="px-6 py-3 rounded-xl bg-white text-black font-medium text-sm hover:bg-neutral-200 transition-colors"
-            >
-              Refresh Page
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => this.setState({ hasError: false, error: null })}
+                className="px-6 py-3 rounded-xl bg-white/10 text-white font-medium text-sm hover:bg-white/20 transition-colors"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 rounded-xl bg-white text-black font-medium text-sm hover:bg-neutral-200 transition-colors"
+              >
+                Refresh Page
+              </button>
+            </div>
             {process.env.NODE_ENV === "development" && this.state.error && (
               <pre className="mt-4 p-4 bg-red-500/5 rounded-lg text-left text-xs text-red-400 overflow-auto">
                 {this.state.error.message}
