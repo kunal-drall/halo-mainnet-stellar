@@ -7,7 +7,9 @@ export type ActivityType =
   | "contribute"
   | "view_dashboard"
   | "bind_wallet"
-  | "payout_received";
+  | "payout_received"
+  | "submit_transaction"
+  | "update_profile";
 
 /**
  * Track a user activity event for analytics.
@@ -27,5 +29,25 @@ export async function trackActivity(
     });
   } catch (error) {
     console.error("[analytics] Failed to track activity:", activityType, error);
+  }
+}
+
+/**
+ * Batch track multiple activities at once.
+ */
+export async function trackActivities(
+  events: Array<{ userId: string; activityType: ActivityType; metadata?: Record<string, unknown> }>
+): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    await (supabase.from("user_activity") as any).insert(
+      events.map((e) => ({
+        user_id: e.userId,
+        activity_type: e.activityType,
+        metadata: e.metadata || {},
+      }))
+    );
+  } catch (error) {
+    console.error("[analytics] Failed to batch track activities:", error);
   }
 }
