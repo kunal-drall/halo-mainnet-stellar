@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rpc } from "@stellar/stellar-sdk";
 import { isSponsorshipEnabled, getSponsorPublicKey } from "@/lib/stellar/sponsor";
+import { getRateLimitStoreSize } from "@/lib/security/rate-limit";
 
 export async function GET() {
   const checks: Record<string, string> = {};
@@ -65,6 +66,9 @@ export async function GET() {
   } catch {
     checks.metricsSnapshot = "unavailable";
   }
+
+  // Rate limit store info
+  checks.rateLimitEntries = String(getRateLimitStoreSize());
 
   const responseTime = Date.now() - startTime;
 
