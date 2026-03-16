@@ -13,6 +13,14 @@ const DAILY_LIMIT_PER_USER = 10; // Max sponsored txns per user per day
 // In-memory tracking for daily limits (resets on deploy)
 const dailyUsage = new Map<string, { count: number; resetAt: number }>();
 
+// Clean up expired daily usage entries every hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, usage] of dailyUsage) {
+    if (now >= usage.resetAt) dailyUsage.delete(key);
+  }
+}, 3_600_000);
+
 /**
  * Wrap a user-signed transaction in a fee-bump transaction
  * paid by the sponsor account.
