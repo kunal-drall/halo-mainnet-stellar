@@ -54,7 +54,8 @@ export const dynamic = "force-dynamic";
 
 async function fetchStats() {
   try {
-    const { simulateContractCall, CONTRACT_ADDRESSES, scValToU64 } = await import("@/lib/stellar/client");
+    const { simulateContractCall, CONTRACT_ADDRESSES } = await import("@/lib/stellar/client");
+    const { scValToNative } = await import("@stellar/stellar-sdk");
 
     const [bindingResult, circleResult, creditResult] = await Promise.all([
       simulateContractCall(CONTRACT_ADDRESSES.identity, "get_binding_count", []),
@@ -62,10 +63,20 @@ async function fetchStats() {
       simulateContractCall(CONTRACT_ADDRESSES.credit, "get_user_count", []),
     ]);
 
+    const toNum = (r: any) => {
+      if (!r) return 0;
+      try {
+        const v = scValToNative(r);
+        return Number(v);
+      } catch {
+        return 0;
+      }
+    };
+
     return {
-      binding_count: bindingResult ? Number(scValToU64(bindingResult)) : 0,
-      circle_count: circleResult ? Number(scValToU64(circleResult)) : 0,
-      credit_user_count: creditResult ? Number(scValToU64(creditResult)) : 0,
+      binding_count: toNum(bindingResult),
+      circle_count: toNum(circleResult),
+      credit_user_count: toNum(creditResult),
     };
   } catch (error) {
     console.error("Failed to fetch explorer stats:", error);
@@ -143,7 +154,7 @@ export default async function ExplorerPage() {
 
       {/* Protocol Metrics */}
       <section className="py-20 px-4 border-y border-white/5">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
           <AnimatedCounter
             value={stats.binding_count}
             label="Identities Bound"
@@ -153,8 +164,12 @@ export default async function ExplorerPage() {
             label="Circles Created"
           />
           <AnimatedCounter
-            value={stats.credit_user_count}
-            label="Credit Users"
+            value={wallets.length}
+            label="Active Wallets"
+          />
+          <AnimatedCounter
+            value={transactions.length}
+            label="Transactions"
           />
         </div>
       </section>
@@ -176,25 +191,28 @@ export default async function ExplorerPage() {
             <h2 className="font-mono text-xs tracking-[0.2em] uppercase text-neutral-500 mb-8">
               ACTIVE PARTICIPANTS
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {wallets.map((wallet, index) => (
                 <div
                   key={wallet.address}
-                  className="bg-[#111827] rounded-2xl p-6 border border-white/5 stagger-reveal visible"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="bg-[#0F1319] rounded-2xl p-6 border border-white/[0.06] hover:-translate-y-0.5 hover:border-white/[0.12] transition-all duration-300"
+                  style={{ animationDelay: `${index * 80}ms` }}
                 >
-                  <AddressDisplay address={wallet.address} />
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-xs font-mono px-2 py-1 rounded-full bg-white/5 text-neutral-400">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-[#EDEDED]">{wallet.label}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#D4A843]/10 text-[#D4A843] border border-[#D4A843]/20">
                       {wallet.role}
                     </span>
+                  </div>
+                  <AddressDisplay address={wallet.address} />
+                  <div className="mt-3">
                     <a
                       href={`https://stellar.expert/explorer/testnet/account/${wallet.address}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-neutral-500 hover:text-white transition-colors"
+                      className="text-xs text-[#545963] hover:text-[#D4A843] transition-colors"
                     >
-                      View on stellar.expert
+                      View on stellar.expert &rarr;
                     </a>
                   </div>
                 </div>

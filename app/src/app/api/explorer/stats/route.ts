@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
-import { simulateContractCall, CONTRACT_ADDRESSES, scValToU64 } from "@/lib/stellar/client";
+import { simulateContractCall, CONTRACT_ADDRESSES } from "@/lib/stellar/client";
+import { scValToNative } from "@stellar/stellar-sdk";
+
+function toNum(result: any): number {
+  if (!result) return 0;
+  try {
+    return Number(scValToNative(result));
+  } catch {
+    return 0;
+  }
+}
 
 export async function GET() {
   try {
@@ -9,15 +19,11 @@ export async function GET() {
       simulateContractCall(CONTRACT_ADDRESSES.credit, "get_user_count", []),
     ]);
 
-    const binding_count = bindingResult ? Number(scValToU64(bindingResult)) : 0;
-    const circle_count = circleResult ? Number(scValToU64(circleResult)) : 0;
-    const credit_user_count = creditResult ? Number(scValToU64(creditResult)) : 0;
-
     return NextResponse.json(
       {
-        binding_count,
-        circle_count,
-        credit_user_count,
+        binding_count: toNum(bindingResult),
+        circle_count: toNum(circleResult),
+        credit_user_count: toNum(creditResult),
         fetched_at: new Date().toISOString(),
       },
       {
