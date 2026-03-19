@@ -24,6 +24,11 @@ export async function GET() {
         binding_count: toNum(bindingResult),
         circle_count: toNum(circleResult),
         credit_user_count: toNum(creditResult),
+        contracts: {
+          identity: CONTRACT_ADDRESSES.identity,
+          circle: CONTRACT_ADDRESSES.circle,
+          credit: CONTRACT_ADDRESSES.credit,
+        },
         fetched_at: new Date().toISOString(),
       },
       {
