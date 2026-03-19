@@ -34,16 +34,32 @@ export const metadata: Metadata = {
     "DeFi",
   ],
   authors: [{ name: "Halo Protocol" }],
+  icons: {
+    icon: [
+      { url: "/favicon-halo.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo-icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/favicon-halo.png",
+  },
   openGraph: {
     title: "Halo Protocol",
     description: "Build Credit Through Community",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1024,
+        height: 1024,
+        alt: "Halo Protocol",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@halodotfun",
     creator: "@halodotfun",
+    images: ["/logo.png"],
   },
 };
 

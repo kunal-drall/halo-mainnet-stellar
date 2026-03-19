@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
@@ -15,14 +15,14 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
+            <img
+              src="/logo-icon.svg"
               alt="Halo"
-              width={100}
-              height={40}
-              className="h-8 w-auto"
-              priority
+              width={32}
+              height={32}
+              className="h-8 w-8"
             />
+            <span className="ml-2 text-lg font-bold tracking-wide font-[family-name:var(--font-display)] text-[#EDEDED]">HALO</span>
           </Link>
 
           {/* Navigation */}

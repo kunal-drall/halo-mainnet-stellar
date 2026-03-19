@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -128,13 +128,14 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex items-center h-16 px-6" style={{ borderBottom: "1px solid var(--color-border)" }}>
         <Link href="/dashboard" className="flex items-center">
-          <Image
-            src="/logo.png"
+          <img
+            src="/logo-icon.svg"
             alt="Halo"
-            width={100}
-            height={40}
-            className="h-7 w-auto"
+            width={28}
+            height={28}
+            className="h-7 w-7"
           />
+          <span className="ml-2 text-base font-bold tracking-wide font-[family-name:var(--font-display)] text-[#EDEDED]">HALO</span>
         </Link>
       </div>
 
