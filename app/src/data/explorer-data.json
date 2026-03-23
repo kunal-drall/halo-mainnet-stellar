@@ -1,22 +1,22 @@
 {
   "network": "testnet",
   "rpcUrl": "https://soroban-testnet.stellar.org",
-  "lastUpdated": "2026-03-23T14:44:37.884Z",
+  "lastUpdated": "2026-03-23T15:06:08.416233Z",
   "contracts": {
     "identity": {
       "address": "CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK",
       "name": "Identity Registry",
-      "description": "Sybil-resistant identity binding — one wallet per verified user"
+      "description": "Sybil-resistant identity binding \u2014 one wallet per verified user"
     },
     "credit": {
       "address": "CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3",
       "name": "Credit Score Engine",
-      "description": "On-chain credit scoring based on payment history (300–850)"
+      "description": "On-chain credit scoring based on payment history (300\u2013850)"
     },
     "circle": {
       "address": "CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP",
       "name": "Circle Manager",
-      "description": "ROSCA circle lifecycle — creation, contributions, and payouts"
+      "description": "ROSCA circle lifecycle \u2014 creation, contributions, and payouts"
     }
   },
   "wallets": [
@@ -78,6 +78,31 @@
     {
       "address": "GDAPACCWCFILDY3KKR64TLWD44YGZQW64KTCVG57SYQO72MAX3M5G4CX",
       "label": "Riya Malhotra",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR",
+      "label": "Ananya Singh",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3",
+      "label": "Vikram Nair",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV",
+      "label": "Divya Menon",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2",
+      "label": "Rahul Khanna",
       "role": "Circle Member"
     }
   ],
@@ -364,6 +389,142 @@
       "label": "Lakshay Kapoor",
       "timestamp": "2026-03-23T14:44:34.582Z",
       "details": "Lakshay Kapoor contributed 80 XLM to \"Pune Wealth Circle\" round 1"
+    },
+    {
+      "hash": "bb9be928ec7d97313ffb90abf5849219dd33c2871dd980d29c67310d6eb7997a",
+      "type": "bind_wallet",
+      "wallet": "GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR",
+      "label": "Ananya Singh",
+      "timestamp": "2026-03-23T15:02:27.126Z",
+      "details": "Bound identity for Ananya Singh"
+    },
+    {
+      "hash": "1f3f6c8102f5d5eef3fd2143de02dd3e1e7b470df4d832be41457ab1ff7e431a",
+      "type": "bind_wallet",
+      "wallet": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "timestamp": "2026-03-23T15:02:36.357Z",
+      "details": "Bound identity for Karan Bajaj"
+    },
+    {
+      "hash": "4b4c84bc76baa87791220594147b833ec25436d5970bb10cf24f5d73ca6c4a12",
+      "type": "bind_wallet",
+      "wallet": "GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3",
+      "label": "Vikram Nair",
+      "timestamp": "2026-03-23T15:02:41.170Z",
+      "details": "Bound identity for Vikram Nair"
+    },
+    {
+      "hash": "53ebd8f5af1162b2f083804ff06c0254597e514d4a43b8e62f7006dead6ac31e",
+      "type": "bind_wallet",
+      "wallet": "GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV",
+      "label": "Divya Menon",
+      "timestamp": "2026-03-23T15:02:45.986Z",
+      "details": "Bound identity for Divya Menon"
+    },
+    {
+      "hash": "bb0ebb38af7e7c91fb80c25e62a8bcd9e0c241988e7ad7948ece84325a94dc23",
+      "type": "bind_wallet",
+      "wallet": "GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2",
+      "label": "Rahul Khanna",
+      "timestamp": "2026-03-23T15:02:50.801Z",
+      "details": "Bound identity for Rahul Khanna"
+    },
+    {
+      "hash": "5b65e91afa0174f1c7f421f9f694e88478cfb85292f6b83034d7c6520d56f6a4",
+      "type": "create_circle",
+      "wallet": "GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR",
+      "label": "Ananya Singh",
+      "timestamp": "2026-03-23T15:02:56.011Z",
+      "details": "Ananya Singh created circle \"Bangalore Tech Circle\" (70 XLM, 3 members)"
+    },
+    {
+      "hash": "0f27cb53efc9fe10bfcc971979baa83ddeb293944d567a1c6d662d4324e85ee1",
+      "type": "join_circle",
+      "wallet": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "timestamp": "2026-03-23T15:03:01.622Z",
+      "details": "Karan Bajaj joined \"Bangalore Tech Circle\""
+    },
+    {
+      "hash": "f5dc87adb0e357b728905920ae9d8de434ccf69ad8311eb57872160b804a32b6",
+      "type": "join_circle",
+      "wallet": "GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3",
+      "label": "Vikram Nair",
+      "timestamp": "2026-03-23T15:03:06.624Z",
+      "details": "Vikram Nair joined \"Bangalore Tech Circle\""
+    },
+    {
+      "hash": "a22866c699da92dd938da8bdfad5796e992d91303add46805def2eafaebf8157",
+      "type": "contribute",
+      "wallet": "GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR",
+      "label": "Ananya Singh",
+      "timestamp": "2026-03-23T15:03:11.634Z",
+      "details": "Ananya Singh contributed 70 XLM to \"Bangalore Tech Circle\" round 1"
+    },
+    {
+      "hash": "250b86a0b12fe1544097036940b2ac4ae880ef4cb39ce985bb79159a5eae8e9f",
+      "type": "contribute",
+      "wallet": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "timestamp": "2026-03-23T15:03:16.634Z",
+      "details": "Karan Bajaj contributed 70 XLM to \"Bangalore Tech Circle\" round 1"
+    },
+    {
+      "hash": "93d5a4e920d3684d67d0ccd4ce8b6d350147f9a4268525ecf7ae92f29e299efd",
+      "type": "contribute",
+      "wallet": "GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3",
+      "label": "Vikram Nair",
+      "timestamp": "2026-03-23T15:03:21.638Z",
+      "details": "Vikram Nair contributed 70 XLM to \"Bangalore Tech Circle\" round 1"
+    },
+    {
+      "hash": "2a7244c42f61edf44bb395f6db820d166b61105cdc660318ea946fdd2864e441",
+      "type": "create_circle",
+      "wallet": "GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV",
+      "label": "Divya Menon",
+      "timestamp": "2026-03-23T15:03:32.045Z",
+      "details": "Divya Menon created circle \"Hyderabad Savings Club\" (55 XLM, 3 members)"
+    },
+    {
+      "hash": "3551dd5352b02cf2295916cf395e1e6cbff65f3f7050b7a6134af4edf08185fe",
+      "type": "join_circle",
+      "wallet": "GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2",
+      "label": "Rahul Khanna",
+      "timestamp": "2026-03-23T15:03:35.595Z",
+      "details": "Rahul Khanna joined \"Hyderabad Savings Club\""
+    },
+    {
+      "hash": "050f7dd77250876d47b44748ed19d62e74547ded8da902787d88439ccdd91ee6",
+      "type": "join_circle",
+      "wallet": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "timestamp": "2026-03-23T15:03:40.603Z",
+      "details": "Karan Bajaj joined \"Hyderabad Savings Club\""
+    },
+    {
+      "hash": "0533a66e3d83afa0fe3be7a3c60d07a20d4eaeab93a0aa549b72891511a81785",
+      "type": "contribute",
+      "wallet": "GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV",
+      "label": "Divya Menon",
+      "timestamp": "2026-03-23T15:03:45.668Z",
+      "details": "Divya Menon contributed 55 XLM to \"Hyderabad Savings Club\" round 1"
+    },
+    {
+      "hash": "a80e714615e3e561673a9566e087e3d37560c7d28a25f4d083a8ab5ffc0d8adb",
+      "type": "contribute",
+      "wallet": "GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2",
+      "label": "Rahul Khanna",
+      "timestamp": "2026-03-23T15:03:50.672Z",
+      "details": "Rahul Khanna contributed 55 XLM to \"Hyderabad Savings Club\" round 1"
+    },
+    {
+      "hash": "967aed5ab65635f2a051027773e78b0bd011246070f7cab83f7b8cb48e980242",
+      "type": "contribute",
+      "wallet": "GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI",
+      "label": "Karan Bajaj",
+      "timestamp": "2026-03-23T15:03:55.774Z",
+      "details": "Karan Bajaj contributed 55 XLM to \"Hyderabad Savings Club\" round 1"
     }
   ]
 }
