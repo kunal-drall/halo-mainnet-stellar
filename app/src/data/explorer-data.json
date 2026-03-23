@@ -1,7 +1,7 @@
 {
   "network": "testnet",
   "rpcUrl": "https://soroban-testnet.stellar.org",
-  "lastUpdated": "2026-03-19T16:41:14.825Z",
+  "lastUpdated": "2026-03-23T14:44:37.884Z",
   "contracts": {
     "identity": {
       "address": "CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK",
@@ -53,6 +53,31 @@
     {
       "address": "GA6BBNIPLZGAGQXKFU4EWPGG4T3K4X2JYNPLFUBMG7NBYT7ZN7MJH6YK",
       "label": "Ananya Singh",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GCZVNEGUTVXQHQXTEHM4XXU2Y6G7SJT74BSFFIRSZYDL3YWM7G3M4PZ2",
+      "label": "Vaibhav Tiwari",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GB24DQKYFM6QXA6JWMUTWBDLTJEKXXYJP6N7OZ2ZAYMNMD76Y6I4FZEJ",
+      "label": "Harshit Agarwal",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GC7VYSOHPONXHXLIW35FZQ3XBWW7QCIN3BPAWQ3Q46ZPHEKM6QFO475Q",
+      "label": "Neha Joshi",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GDAPACCWCFILDY3KKR64TLWD44YGZQW64KTCVG57SYQO72MAX3M5G4CX",
+      "label": "Riya Malhotra",
       "role": "Circle Member"
     }
   ],
@@ -203,6 +228,142 @@
       "wallet": "GA6BBNIPLZGAGQXKFU4EWPGG4T3K4X2JYNPLFUBMG7NBYT7ZN7MJH6YK",
       "timestamp": "2026-03-19T16:41:12.822Z",
       "details": "Ananya Singh contributed 50 XLM to round 1"
+    },
+    {
+      "hash": "4ff668bb4f38bf2fbad0c53ce2babeefc96d23f6defe2fffaca3c7c5fe2e4e95",
+      "type": "bind_wallet",
+      "wallet": "GCZVNEGUTVXQHQXTEHM4XXU2Y6G7SJT74BSFFIRSZYDL3YWM7G3M4PZ2",
+      "label": "Vaibhav Tiwari",
+      "timestamp": "2026-03-23T14:42:58.799Z",
+      "details": "Bound identity for Vaibhav Tiwari"
+    },
+    {
+      "hash": "7e4411c1110eeb9e0192c64c21461e081ada090ef244ab002e79a37cf9af82e8",
+      "type": "bind_wallet",
+      "wallet": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "timestamp": "2026-03-23T14:43:05.859Z",
+      "details": "Bound identity for Lakshay Kapoor"
+    },
+    {
+      "hash": "3cca8283e1729b55ae5d6b70d1c98ea8481c2383f26d9600f2487085c4bd185f",
+      "type": "bind_wallet",
+      "wallet": "GB24DQKYFM6QXA6JWMUTWBDLTJEKXXYJP6N7OZ2ZAYMNMD76Y6I4FZEJ",
+      "label": "Harshit Agarwal",
+      "timestamp": "2026-03-23T14:43:15.120Z",
+      "details": "Bound identity for Harshit Agarwal"
+    },
+    {
+      "hash": "28b0aeb46e27933d9a7db7cbf235f75bb5d13992b3b3e7dab5dbc4c643325591",
+      "type": "bind_wallet",
+      "wallet": "GC7VYSOHPONXHXLIW35FZQ3XBWW7QCIN3BPAWQ3Q46ZPHEKM6QFO475Q",
+      "label": "Neha Joshi",
+      "timestamp": "2026-03-23T14:43:19.965Z",
+      "details": "Bound identity for Neha Joshi"
+    },
+    {
+      "hash": "74f0ce664e1fed14aa3a1439a497d80812688bb37a95a7347affc0ec2bb46fca",
+      "type": "bind_wallet",
+      "wallet": "GDAPACCWCFILDY3KKR64TLWD44YGZQW64KTCVG57SYQO72MAX3M5G4CX",
+      "label": "Riya Malhotra",
+      "timestamp": "2026-03-23T14:43:24.817Z",
+      "details": "Bound identity for Riya Malhotra"
+    },
+    {
+      "hash": "f5430fa7509f16b17dffd9eb27a1b3cb66936d7ef127fefe98d609d2bee7e91b",
+      "type": "create_circle",
+      "wallet": "GCZVNEGUTVXQHQXTEHM4XXU2Y6G7SJT74BSFFIRSZYDL3YWM7G3M4PZ2",
+      "label": "Vaibhav Tiwari",
+      "timestamp": "2026-03-23T14:43:30.082Z",
+      "details": "Vaibhav Tiwari created circle \"Mumbai Savers Circle\" (60 XLM, 3 members)"
+    },
+    {
+      "hash": "5bd5aa50407bbeca861d315c762dcab59f17a17fe149c8eabd93e8ae94f21457",
+      "type": "join_circle",
+      "wallet": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "timestamp": "2026-03-23T14:43:35.762Z",
+      "details": "Lakshay Kapoor joined \"Mumbai Savers Circle\""
+    },
+    {
+      "hash": "c21d0561d5af649e7fb266f1749de7fc6206c4999d109c8c1f56534876635118",
+      "type": "join_circle",
+      "wallet": "GB24DQKYFM6QXA6JWMUTWBDLTJEKXXYJP6N7OZ2ZAYMNMD76Y6I4FZEJ",
+      "label": "Harshit Agarwal",
+      "timestamp": "2026-03-23T14:43:45.222Z",
+      "details": "Harshit Agarwal joined \"Mumbai Savers Circle\""
+    },
+    {
+      "hash": "0afa8da0671d5f08b7fef5bca74ccb748e462b9883db0ab046e4510916b71471",
+      "type": "contribute",
+      "wallet": "GCZVNEGUTVXQHQXTEHM4XXU2Y6G7SJT74BSFFIRSZYDL3YWM7G3M4PZ2",
+      "label": "Vaibhav Tiwari",
+      "timestamp": "2026-03-23T14:43:50.281Z",
+      "details": "Vaibhav Tiwari contributed 60 XLM to \"Mumbai Savers Circle\" round 1"
+    },
+    {
+      "hash": "421ece86799061cb2898daebff1a6d28b45e1da6944442d11af3d1114aad629b",
+      "type": "contribute",
+      "wallet": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "timestamp": "2026-03-23T14:43:55.330Z",
+      "details": "Lakshay Kapoor contributed 60 XLM to \"Mumbai Savers Circle\" round 1"
+    },
+    {
+      "hash": "988e02657301bed46754cdfa9b200ccfd3a60387091ea5c8f562ad8be8a98fb5",
+      "type": "contribute",
+      "wallet": "GB24DQKYFM6QXA6JWMUTWBDLTJEKXXYJP6N7OZ2ZAYMNMD76Y6I4FZEJ",
+      "label": "Harshit Agarwal",
+      "timestamp": "2026-03-23T14:44:00.377Z",
+      "details": "Harshit Agarwal contributed 60 XLM to \"Mumbai Savers Circle\" round 1"
+    },
+    {
+      "hash": "ac22e6cca6bffe44ebae18f1efc35302c4436211420aa955ff92b4d11873829a",
+      "type": "create_circle",
+      "wallet": "GC7VYSOHPONXHXLIW35FZQ3XBWW7QCIN3BPAWQ3Q46ZPHEKM6QFO475Q",
+      "label": "Neha Joshi",
+      "timestamp": "2026-03-23T14:44:10.847Z",
+      "details": "Neha Joshi created circle \"Pune Wealth Circle\" (80 XLM, 3 members)"
+    },
+    {
+      "hash": "acafd0577c39a8f41930c5dd7fec63b9419138a656538b3ff6f494887d8109a6",
+      "type": "join_circle",
+      "wallet": "GDAPACCWCFILDY3KKR64TLWD44YGZQW64KTCVG57SYQO72MAX3M5G4CX",
+      "label": "Riya Malhotra",
+      "timestamp": "2026-03-23T14:44:14.352Z",
+      "details": "Riya Malhotra joined \"Pune Wealth Circle\""
+    },
+    {
+      "hash": "744e1c7e5d74efb23370fede97c654d83f291076b549f7045ae6243492ffc567",
+      "type": "join_circle",
+      "wallet": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "timestamp": "2026-03-23T14:44:19.385Z",
+      "details": "Lakshay Kapoor joined \"Pune Wealth Circle\""
+    },
+    {
+      "hash": "cf9fdd72c114a78f6cd5ef508e7fc08aa2c316a9980b0030a30fec74b32917d6",
+      "type": "contribute",
+      "wallet": "GC7VYSOHPONXHXLIW35FZQ3XBWW7QCIN3BPAWQ3Q46ZPHEKM6QFO475Q",
+      "label": "Neha Joshi",
+      "timestamp": "2026-03-23T14:44:24.480Z",
+      "details": "Neha Joshi contributed 80 XLM to \"Pune Wealth Circle\" round 1"
+    },
+    {
+      "hash": "46bfdff37990b60cbb649d9f1c65a155b2ca37dade7b4fa9958897e077a749b5",
+      "type": "contribute",
+      "wallet": "GDAPACCWCFILDY3KKR64TLWD44YGZQW64KTCVG57SYQO72MAX3M5G4CX",
+      "label": "Riya Malhotra",
+      "timestamp": "2026-03-23T14:44:29.535Z",
+      "details": "Riya Malhotra contributed 80 XLM to \"Pune Wealth Circle\" round 1"
+    },
+    {
+      "hash": "673475f0d80c61886c6e3a8a3e99074e95abd293c02f8266b3aa2506ccc2d80c",
+      "type": "contribute",
+      "wallet": "GBBAHMGXHNLXUHDY6X6RUNMREDALVZDD3MNCCOF3WYVIC2NYSVPN4FE3",
+      "label": "Lakshay Kapoor",
+      "timestamp": "2026-03-23T14:44:34.582Z",
+      "details": "Lakshay Kapoor contributed 80 XLM to \"Pune Wealth Circle\" round 1"
     }
   ]
 }
