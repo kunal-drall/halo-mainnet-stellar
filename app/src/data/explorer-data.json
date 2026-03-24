@@ -1,7 +1,7 @@
 {
   "network": "testnet",
   "rpcUrl": "https://soroban-testnet.stellar.org",
-  "lastUpdated": "2026-03-23T15:06:08.416233Z",
+  "lastUpdated": "2026-03-24T11:07:38.231692+00:00",
   "contracts": {
     "identity": {
       "address": "CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK",
@@ -103,6 +103,31 @@
     {
       "address": "GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2",
       "label": "Rahul Khanna",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ",
+      "label": "Aditya Bose",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4",
+      "label": "Nishant Dubey",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q",
+      "label": "Pooja Iyer",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR",
+      "label": "Samarth Rao",
       "role": "Circle Member"
     }
   ],
@@ -525,6 +550,142 @@
       "label": "Karan Bajaj",
       "timestamp": "2026-03-23T15:03:55.774Z",
       "details": "Karan Bajaj contributed 55 XLM to \"Hyderabad Savings Club\" round 1"
+    },
+    {
+      "hash": "5fea5fdfde9af2122c735c8626a2161390369f94197fb5e8ceb38a4413fa5875",
+      "type": "bind_wallet",
+      "wallet": "GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ",
+      "label": "Aditya Bose",
+      "timestamp": "2026-03-24T11:05:34.018Z",
+      "details": "Bound identity for Aditya Bose"
+    },
+    {
+      "hash": "69e9538c23a21f45bad7c09bdec3800536c11f376feddd23204604521d37a43c",
+      "type": "bind_wallet",
+      "wallet": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "timestamp": "2026-03-24T11:05:38.952Z",
+      "details": "Bound identity for Meera Pillai"
+    },
+    {
+      "hash": "b201513f636a6b0f92943e0ef538844188e69c0cd7fc1a2e2a8e0a81dff7306e",
+      "type": "bind_wallet",
+      "wallet": "GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4",
+      "label": "Nishant Dubey",
+      "timestamp": "2026-03-24T11:05:43.827Z",
+      "details": "Bound identity for Nishant Dubey"
+    },
+    {
+      "hash": "c4dcab22088277b968866bd16b3b162f8205f383e14f5cede36e0d5488a53bfd",
+      "type": "bind_wallet",
+      "wallet": "GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q",
+      "label": "Pooja Iyer",
+      "timestamp": "2026-03-24T11:05:48.753Z",
+      "details": "Bound identity for Pooja Iyer"
+    },
+    {
+      "hash": "ef0f499234a6821e0fa2a04febda4802264878cea26b98df0c4bdd538bb54fa7",
+      "type": "bind_wallet",
+      "wallet": "GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR",
+      "label": "Samarth Rao",
+      "timestamp": "2026-03-24T11:05:55.846Z",
+      "details": "Bound identity for Samarth Rao"
+    },
+    {
+      "hash": "ad9237dfa0e311c511897dfdaf3f4da89f0bed3c91acb87bb29811f3280cfff1",
+      "type": "create_circle",
+      "wallet": "GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ",
+      "label": "Aditya Bose",
+      "timestamp": "2026-03-24T11:06:05.573Z",
+      "details": "Aditya Bose created circle \"Chennai Wealth Circle\" (65 XLM, 3 members)"
+    },
+    {
+      "hash": "571bde09280e3207916a7f13537493cdc0887ac64053b04a1abf2384bf10873d",
+      "type": "join_circle",
+      "wallet": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "timestamp": "2026-03-24T11:06:09.117Z",
+      "details": "Meera Pillai joined \"Chennai Wealth Circle\""
+    },
+    {
+      "hash": "e10b5ea1feb17d8d7a2cf76a661cfa8c13d7da2b9935271f0e2b45a03f06ed41",
+      "type": "join_circle",
+      "wallet": "GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4",
+      "label": "Nishant Dubey",
+      "timestamp": "2026-03-24T11:06:14.189Z",
+      "details": "Nishant Dubey joined \"Chennai Wealth Circle\""
+    },
+    {
+      "hash": "13bf4a6ccac7c44ae588419959d85c0fbd877f29420d55cedae9438415a7da89",
+      "type": "contribute",
+      "wallet": "GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ",
+      "label": "Aditya Bose",
+      "timestamp": "2026-03-24T11:06:19.352Z",
+      "details": "Aditya Bose contributed 65 XLM to \"Chennai Wealth Circle\" round 1"
+    },
+    {
+      "hash": "d1624ac34436cd1a9ba05e75435dcd4fef16591815db93015864f67880238397",
+      "type": "contribute",
+      "wallet": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "timestamp": "2026-03-24T11:06:24.445Z",
+      "details": "Meera Pillai contributed 65 XLM to \"Chennai Wealth Circle\" round 1"
+    },
+    {
+      "hash": "08c31195d03ec795d13bd0a2f415bfd67c32aa54089acf9eb32381cf65b2421f",
+      "type": "contribute",
+      "wallet": "GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4",
+      "label": "Nishant Dubey",
+      "timestamp": "2026-03-24T11:06:29.601Z",
+      "details": "Nishant Dubey contributed 65 XLM to \"Chennai Wealth Circle\" round 1"
+    },
+    {
+      "hash": "47c1be0537332112be42cff402d0e8546768dbf6ce0bea93b317a690914f240f",
+      "type": "create_circle",
+      "wallet": "GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q",
+      "label": "Pooja Iyer",
+      "timestamp": "2026-03-24T11:06:40.128Z",
+      "details": "Pooja Iyer created circle \"Kolkata Savings Pool\" (80 XLM, 3 members)"
+    },
+    {
+      "hash": "7b09247dfc09b8475719340fd1bc8e7478c9be035b20995de80662db9c2eb932",
+      "type": "join_circle",
+      "wallet": "GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR",
+      "label": "Samarth Rao",
+      "timestamp": "2026-03-24T11:06:45.849Z",
+      "details": "Samarth Rao joined \"Kolkata Savings Pool\""
+    },
+    {
+      "hash": "a177712727f552b783e4c05536df1e114d956894e5ce6f2ca8797f161a4b2aba",
+      "type": "join_circle",
+      "wallet": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "timestamp": "2026-03-24T11:06:55.389Z",
+      "details": "Meera Pillai joined \"Kolkata Savings Pool\""
+    },
+    {
+      "hash": "cb7e6fa29fc1f0ff888328adcbb8175819885de64a7e09187f5997fa4ac46898",
+      "type": "contribute",
+      "wallet": "GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q",
+      "label": "Pooja Iyer",
+      "timestamp": "2026-03-24T11:07:04.903Z",
+      "details": "Pooja Iyer contributed 80 XLM to \"Kolkata Savings Pool\" round 1"
+    },
+    {
+      "hash": "fc2798b1d400620e1e10292506633221286238faece1cd55120e038b64efa552",
+      "type": "contribute",
+      "wallet": "GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR",
+      "label": "Samarth Rao",
+      "timestamp": "2026-03-24T11:07:09.984Z",
+      "details": "Samarth Rao contributed 80 XLM to \"Kolkata Savings Pool\" round 1"
+    },
+    {
+      "hash": "5023e0b7fac5d69e7712aefdd079ccaf10d28517310f01bb915e2273f72c7691",
+      "type": "contribute",
+      "wallet": "GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J",
+      "label": "Meera Pillai",
+      "timestamp": "2026-03-24T11:07:15.067Z",
+      "details": "Meera Pillai contributed 80 XLM to \"Kolkata Savings Pool\" round 1"
     }
   ]
 }
