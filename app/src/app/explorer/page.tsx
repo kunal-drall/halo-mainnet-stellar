@@ -49,34 +49,21 @@ function getExplorerData(): ExplorerData {
   }
 }
 
-// Force dynamic rendering (queries live contract data)
+// Force dynamic rendering so stats are always fresh
 export const dynamic = "force-dynamic";
 
 async function fetchStats() {
   try {
-    const { simulateContractCall, CONTRACT_ADDRESSES } = await import("@/lib/stellar/client");
-    const { scValToNative } = await import("@stellar/stellar-sdk");
-
-    const [bindingResult, circleResult, creditResult] = await Promise.all([
-      simulateContractCall(CONTRACT_ADDRESSES.identity, "get_binding_count", []),
-      simulateContractCall(CONTRACT_ADDRESSES.circle, "get_circle_count", []),
-      simulateContractCall(CONTRACT_ADDRESSES.credit, "get_user_count", []),
-    ]);
-
-    const toNum = (r: any) => {
-      if (!r) return 0;
-      try {
-        const v = scValToNative(r);
-        return Number(v);
-      } catch {
-        return 0;
-      }
-    };
-
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.tryhalo.fun";
+    const res = await fetch(`${baseUrl}/api/explorer/stats`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
     return {
-      binding_count: toNum(bindingResult),
-      circle_count: toNum(circleResult),
-      credit_user_count: toNum(creditResult),
+      binding_count: data.binding_count ?? 0,
+      circle_count: data.circle_count ?? 0,
+      credit_user_count: data.credit_user_count ?? 0,
     };
   } catch (error) {
     console.error("Failed to fetch explorer stats:", error);
