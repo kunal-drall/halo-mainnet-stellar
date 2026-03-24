@@ -1,7 +1,7 @@
 {
   "network": "testnet",
   "rpcUrl": "https://soroban-testnet.stellar.org",
-  "lastUpdated": "2026-03-24T11:07:38.231692+00:00",
+  "lastUpdated": "2026-03-24T11:17:54.378711+00:00",
   "contracts": {
     "identity": {
       "address": "CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK",
@@ -128,6 +128,46 @@
     {
       "address": "GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR",
       "label": "Samarth Rao",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV",
+      "label": "Deepak Sharma",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC",
+      "label": "Arnav Gupta",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY",
+      "label": "Tanvi Reddy",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T",
+      "label": "Kabir Khan",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL",
+      "label": "Shreya Jain",
+      "role": "Circle Member"
+    },
+    {
+      "address": "GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4",
+      "label": "Manish Patel",
+      "role": "Circle Creator"
+    },
+    {
+      "address": "GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ",
+      "label": "Aditi Verma",
       "role": "Circle Member"
     }
   ],
@@ -686,6 +726,214 @@
       "label": "Meera Pillai",
       "timestamp": "2026-03-24T11:07:15.067Z",
       "details": "Meera Pillai contributed 80 XLM to \"Kolkata Savings Pool\" round 1"
+    },
+    {
+      "hash": "3f34f13fd17e8aedf5921dd9c69f9ab9be9c33ca527b2e26f10b68d82f12d645",
+      "type": "bind_wallet",
+      "wallet": "GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV",
+      "label": "Deepak Sharma",
+      "timestamp": "2026-03-24T11:14:26.616Z",
+      "details": "Bound identity for Deepak Sharma"
+    },
+    {
+      "hash": "a2331c498ec0c1001f8e5baf0a35bb64ab3bdb2a6023d851e6966f8e5399b575",
+      "type": "bind_wallet",
+      "wallet": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "timestamp": "2026-03-24T11:14:35.899Z",
+      "details": "Bound identity for Simran Kaur"
+    },
+    {
+      "hash": "19256e34446069640ebdbcbc849d4d3ad815c2f5a5e54c587dc792cc4562986d",
+      "type": "bind_wallet",
+      "wallet": "GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC",
+      "label": "Arnav Gupta",
+      "timestamp": "2026-03-24T11:14:45.158Z",
+      "details": "Bound identity for Arnav Gupta"
+    },
+    {
+      "hash": "ad0879e79d247157c581eca8380b2a524c0f7ec4f62325328d273405ec4520f4",
+      "type": "bind_wallet",
+      "wallet": "GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY",
+      "label": "Tanvi Reddy",
+      "timestamp": "2026-03-24T11:14:50.001Z",
+      "details": "Bound identity for Tanvi Reddy"
+    },
+    {
+      "hash": "91004dbd97387e718d7d4e5bedff4159e11b6acbce7f7bf16c6b1d3852aa39b5",
+      "type": "bind_wallet",
+      "wallet": "GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T",
+      "label": "Kabir Khan",
+      "timestamp": "2026-03-24T11:14:54.899Z",
+      "details": "Bound identity for Kabir Khan"
+    },
+    {
+      "hash": "2730e3ba4a94958a7aedcf455cbab220b2589cdd56dff92558c5953ebb712599",
+      "type": "bind_wallet",
+      "wallet": "GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL",
+      "label": "Shreya Jain",
+      "timestamp": "2026-03-24T11:14:59.745Z",
+      "details": "Bound identity for Shreya Jain"
+    },
+    {
+      "hash": "dddf33b38226c986dc02cb5f6f726f4785a1702dba7ee7f74812c0d7639a036f",
+      "type": "bind_wallet",
+      "wallet": "GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4",
+      "label": "Manish Patel",
+      "timestamp": "2026-03-24T11:15:04.794Z",
+      "details": "Bound identity for Manish Patel"
+    },
+    {
+      "hash": "2d911f8d05528c5821282cf2133e53638fa15ca17f1cd9bae798b2923d0f449c",
+      "type": "bind_wallet",
+      "wallet": "GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ",
+      "label": "Aditi Verma",
+      "timestamp": "2026-03-24T11:15:09.638Z",
+      "details": "Bound identity for Aditi Verma"
+    },
+    {
+      "hash": "b424a6f1f22ee31283b64ed2e0fd749267234ceded67e84c32bb7666f620f130",
+      "type": "create_circle",
+      "wallet": "GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV",
+      "label": "Deepak Sharma",
+      "timestamp": "2026-03-24T11:15:14.915Z",
+      "details": "Deepak Sharma created \"Mumbai Tech Savers\" (60 XLM, 3 members)"
+    },
+    {
+      "hash": "a2897fbd16a6cb1d652418550ca50a44eb90fd7edabc66655a3f749515be4130",
+      "type": "join_circle",
+      "wallet": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "timestamp": "2026-03-24T11:15:20.613Z",
+      "details": "Simran Kaur joined \"Mumbai Tech Savers\""
+    },
+    {
+      "hash": "db57879695c4b2147a5d45f109c87fcf4b4e7b3d82c295f210b9bef1921ba1f1",
+      "type": "join_circle",
+      "wallet": "GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC",
+      "label": "Arnav Gupta",
+      "timestamp": "2026-03-24T11:15:25.655Z",
+      "details": "Arnav Gupta joined \"Mumbai Tech Savers\""
+    },
+    {
+      "hash": "493a83dab01bb97226677445ee317cee85bd6d65a8f8508c8b4a8c0010be2a88",
+      "type": "contribute",
+      "wallet": "GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV",
+      "label": "Deepak Sharma",
+      "timestamp": "2026-03-24T11:15:30.709Z",
+      "details": "Deepak Sharma contributed 60 XLM to \"Mumbai Tech Savers\" round 1"
+    },
+    {
+      "hash": "1dffef3576232c84a8912c25fc5ce626690dfef3965eb1fde971196fed2ba510",
+      "type": "contribute",
+      "wallet": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "timestamp": "2026-03-24T11:15:35.757Z",
+      "details": "Simran Kaur contributed 60 XLM to \"Mumbai Tech Savers\" round 1"
+    },
+    {
+      "hash": "147050dd92496042be5f29d97c02cf3557aca7a3fa43ae926f636d1975a45528",
+      "type": "contribute",
+      "wallet": "GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC",
+      "label": "Arnav Gupta",
+      "timestamp": "2026-03-24T11:15:40.809Z",
+      "details": "Arnav Gupta contributed 60 XLM to \"Mumbai Tech Savers\" round 1"
+    },
+    {
+      "hash": "023fac8054563a24532cdb046629416cc66aeaa64cbd3407abf7c71052aa5fae",
+      "type": "create_circle",
+      "wallet": "GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY",
+      "label": "Tanvi Reddy",
+      "timestamp": "2026-03-24T11:15:51.279Z",
+      "details": "Tanvi Reddy created \"Jaipur Savings Circle\" (45 XLM, 3 members)"
+    },
+    {
+      "hash": "aa9233137cbd4c183ffb0650b71a8a8f1adf074e77a47081d93ebd67b7b5c478",
+      "type": "join_circle",
+      "wallet": "GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T",
+      "label": "Kabir Khan",
+      "timestamp": "2026-03-24T11:15:54.737Z",
+      "details": "Kabir Khan joined \"Jaipur Savings Circle\""
+    },
+    {
+      "hash": "e2b8ac1c78c5b59952da9db0465a788239efd4b0dc73e0fed00de8f022bcd956",
+      "type": "join_circle",
+      "wallet": "GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL",
+      "label": "Shreya Jain",
+      "timestamp": "2026-03-24T11:15:59.772Z",
+      "details": "Shreya Jain joined \"Jaipur Savings Circle\""
+    },
+    {
+      "hash": "08ba11de68a1320a9620c876aefd5d168f71ee308846d7acddbba1ab83945566",
+      "type": "contribute",
+      "wallet": "GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY",
+      "label": "Tanvi Reddy",
+      "timestamp": "2026-03-24T11:16:04.841Z",
+      "details": "Tanvi Reddy contributed 45 XLM to \"Jaipur Savings Circle\" round 1"
+    },
+    {
+      "hash": "80e679e3ffadb80c2409aa17175a8d1d2d15a942953d8ee2bd394922f3a00c4e",
+      "type": "contribute",
+      "wallet": "GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T",
+      "label": "Kabir Khan",
+      "timestamp": "2026-03-24T11:16:09.885Z",
+      "details": "Kabir Khan contributed 45 XLM to \"Jaipur Savings Circle\" round 1"
+    },
+    {
+      "hash": "03f19c476d125b39c94933f32e2ff62e0bd264d371dc03dcf68eb8f192f170b5",
+      "type": "contribute",
+      "wallet": "GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL",
+      "label": "Shreya Jain",
+      "timestamp": "2026-03-24T11:16:14.987Z",
+      "details": "Shreya Jain contributed 45 XLM to \"Jaipur Savings Circle\" round 1"
+    },
+    {
+      "hash": "77d7856e183d7060e53c8e74f9c16752356c628d5cfda163b6053747056b6241",
+      "type": "create_circle",
+      "wallet": "GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4",
+      "label": "Manish Patel",
+      "timestamp": "2026-03-24T11:16:25.455Z",
+      "details": "Manish Patel created \"Pune Wealth Fund\" (90 XLM, 3 members)"
+    },
+    {
+      "hash": "98fe2d64a3e8be82a7f60234400f29ed13fd8e7d72d5fb6697a0e9931018d119",
+      "type": "join_circle",
+      "wallet": "GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ",
+      "label": "Aditi Verma",
+      "timestamp": "2026-03-24T11:16:31.154Z",
+      "details": "Aditi Verma joined \"Pune Wealth Fund\""
+    },
+    {
+      "hash": "ea557f850275908b174112f198b447b7e38844bdfd72e3ba4997bef97a341ab0",
+      "type": "join_circle",
+      "wallet": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "timestamp": "2026-03-24T11:16:40.613Z",
+      "details": "Simran Kaur joined \"Pune Wealth Fund\""
+    },
+    {
+      "hash": "ea318344edef84bc35fdb2a5480ecf3ee73f8e5a58fcaf37006c32a831298218",
+      "type": "contribute",
+      "wallet": "GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4",
+      "label": "Manish Patel",
+      "timestamp": "2026-03-24T11:16:45.659Z",
+      "details": "Manish Patel contributed 90 XLM to \"Pune Wealth Fund\" round 1"
+    },
+    {
+      "hash": "59c1fbfd5a7e69e57a4fd9a08a37d8344904ad955588ad11f36d99ca698012f0",
+      "type": "contribute",
+      "wallet": "GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ",
+      "label": "Aditi Verma",
+      "timestamp": "2026-03-24T11:16:50.711Z",
+      "details": "Aditi Verma contributed 90 XLM to \"Pune Wealth Fund\" round 1"
+    },
+    {
+      "hash": "19feaa54e780fe170b2ec13086ba4c2e83403f9f6189a2943879987d1bf18938",
+      "type": "contribute",
+      "wallet": "GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4",
+      "label": "Simran Kaur",
+      "timestamp": "2026-03-24T11:16:55.760Z",
+      "details": "Simran Kaur contributed 90 XLM to \"Pune Wealth Fund\" round 1"
     }
   ]
 }
