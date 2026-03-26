@@ -3,6 +3,8 @@ import { AnimatedCounter } from "./components/animated-counter";
 import { AddressDisplay } from "./components/address-display";
 import { TransactionTimeline } from "./components/transaction-timeline";
 import { ContractTable } from "./components/contract-table";
+import { simulateContractCall, CONTRACT_ADDRESSES } from "@/lib/stellar/client";
+import { scValToNative } from "@stellar/stellar-sdk";
 
 export const metadata = {
   title: "Protocol Explorer | Halo Protocol",
@@ -31,7 +33,6 @@ function getExplorerData(): ExplorerData {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const raw = require("@/data/explorer-data.json");
 
-    // Transform contracts from object format to array format
     let contracts: ExplorerData["contracts"];
     if (raw.contracts && !Array.isArray(raw.contracts)) {
       contracts = Object.values(raw.contracts) as ExplorerData["contracts"];
@@ -52,22 +53,28 @@ function getExplorerData(): ExplorerData {
 // Force dynamic rendering so stats are always fresh
 export const dynamic = "force-dynamic";
 
+function toNum(result: unknown): number {
+  if (!result) return 0;
+  try {
+    return Number(scValToNative(result as Parameters<typeof scValToNative>[0]));
+  } catch {
+    return 0;
+  }
+}
+
 async function fetchStats() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.tryhalo.fun";
-    const res = await fetch(`${baseUrl}/api/explorer/stats`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const [bindingResult, circleResult] = await Promise.all([
+      simulateContractCall(CONTRACT_ADDRESSES.identity, "get_binding_count", []),
+      simulateContractCall(CONTRACT_ADDRESSES.circle, "get_circle_count", []),
+    ]);
     return {
-      binding_count: data.binding_count ?? 0,
-      circle_count: data.circle_count ?? 0,
-      credit_user_count: data.credit_user_count ?? 0,
+      binding_count: toNum(bindingResult),
+      circle_count: toNum(circleResult),
     };
   } catch (error) {
     console.error("Failed to fetch explorer stats:", error);
-    return { binding_count: 0, circle_count: 0, credit_user_count: 0 };
+    return { binding_count: 0, circle_count: 0 };
   }
 }
 
