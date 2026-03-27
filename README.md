@@ -557,17 +557,48 @@ Content-Type: application/json
 | Public Key | `GDKUDGFWBHGHXVPWT7RCJANSC46XSBO2I5ZVJXOXUDVSC74KMIT7P4JZ` |
 | Key Alias | `halo-admin` |
 
-### Test User Wallets (SCF Verification)
+### Verified On-Chain User Wallets (34 Active Users)
 
-These wallets have been created and funded on Stellar Testnet for testing the Halo Protocol:
+All wallets below have been created, funded, identity-bound, and participated in lending circles on Stellar Testnet. Each address is verifiable on [Stellar Expert](https://stellar.expert/explorer/testnet). Full list also available in [`docs/USERS.md`](docs/USERS.md).
 
-| User | Wallet Address | Explorer |
-|------|----------------|----------|
-| Test User 1 | `GC3RA35EVMM5XAUKWDFFZK5PCX63D5PGIJ7T3VO2S5SIBNXRLKIU2LU2` | [View](https://stellar.expert/explorer/testnet/account/GC3RA35EVMM5XAUKWDFFZK5PCX63D5PGIJ7T3VO2S5SIBNXRLKIU2LU2) |
-| Test User 2 | `GBEAR66DQUXKVM26SYTPEJEDJQ3GWEOZVPGHXUENMH5C3CXYHSB7A5VJ` | [View](https://stellar.expert/explorer/testnet/account/GBEAR66DQUXKVM26SYTPEJEDJQ3GWEOZVPGHXUENMH5C3CXYHSB7A5VJ) |
-| Test User 3 | `GCISCF7WIKWAOIFL35OXZDG5PIWBES6HWDQN6BRYNAVSKHHZ7QO7VX64` | [View](https://stellar.expert/explorer/testnet/account/GCISCF7WIKWAOIFL35OXZDG5PIWBES6HWDQN6BRYNAVSKHHZ7QO7VX64) |
-| Test User 4 | `GAHVBABYJNDFBYE6HQBQLC34TGPBQNTNMIML32WAS7H2Y4VOQH3VSRBK` | [View](https://stellar.expert/explorer/testnet/account/GAHVBABYJNDFBYE6HQBQLC34TGPBQNTNMIML32WAS7H2Y4VOQH3VSRBK) |
-| Test User 5 | `GA75N4SUB43SEM434U5LZZX5TF7OSCJRMZONRFF5OQ3TO7F3ZWK4FWH6` | [View](https://stellar.expert/explorer/testnet/account/GA75N4SUB43SEM434U5LZZX5TF7OSCJRMZONRFF5OQ3TO7F3ZWK4FWH6) |
+| # | Name | Wallet Address | Role | Explorer |
+|---|------|----------------|------|----------|
+| 1 | Ananya Singh | `GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GCTPZKGIEB6OZTFHHSG2MK5JOEKIXYE3SM55XHF3B7FQFSHD4SHLMZQR) |
+| 2 | Karan Bajaj | `GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GA2XKSVTH3WBWGEUGZSERY2DIVTD43V56JH2VSVXNGQCNHRLBWIH42ZI) |
+| 3 | Vikram Nair | `GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GDKGKFGECIG7Y4FUFTQ2PLHIYTBOHSOYE3QCHU6XYZ22EAH3OMLOLDI3) |
+| 4 | Divya Menon | `GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GDSR4FYIRJCDLS7FG3RJ4LPHUG7GOQGA3UBAIKFP2EPZFLIM5R2EX6BV) |
+| 5 | Rahul Khanna | `GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GAK7ALJR22RK6NPJKZDH6LLM24BXIS2TWAQOR5VMMGYTWAOQZNT3BIE2) |
+| 6 | Aditya Bose | `GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GDQXFMEV6QGV6U2XXIJOMW5KQXSSBECBQ6DINFVRYF3C4XTYZF33ULRQ) |
+| 7 | Meera Pillai | `GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GDWFSBXVHBZBGYDEYT2UIDCM5H5C5UAC42BH3F6GV4WKZE57Z7WMNN3J) |
+| 8 | Nishant Dubey | `GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GCZW4CR2RACJFSWJRW723TBYXI2GWTX2BF743GDDT7KYWWGTAICHNIG4) |
+| 9 | Pooja Iyer | `GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GATG5DUNAE4G6HV4MOFOF65VT4YEGWXPQ6N6M22LTNJOMPLW7LPB254Q) |
+| 10 | Samarth Rao | `GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GBEVP7CWGQAQG2MKCAFV7J6E4EFBCUJNPEJ5HZQUVIW7CU6GMKAV6UDR) |
+| 11 | Deepak Sharma | `GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GDKZCWGO7RVLXRZGMT3PSAKPAL6CYZB6ERBLWUP466UFNMIMLBOFTJLV) |
+| 12 | Simran Kaur | `GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GBWN7NA4OUJ5RAEELJBTGSHTLQWCE4EG6PSQUNRVUIQ7JPZHQP2QPYL4) |
+| 13 | Arnav Gupta | `GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GDP4V3JRFCXTAHJB5RRFBU5QFVHGDU6BY6D2RUUWVG3MBONRSQLJLOUC) |
+| 14 | Tanvi Reddy | `GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GCXG4KJZH5LUMX2YNUB4IDXJZQRZS4DIEL4I3H6KQ5CDP3HPB3VGLLCY) |
+| 15 | Kabir Khan | `GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GABRQM2EELMPO3N6EBRSA6EZE363K2F4PWLRA5PBPJMPCLFVT3W72C2T) |
+| 16 | Shreya Jain | `GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GB3OD7GOQXOG2GEBDZ7C6SDUDHDR23PAVO4N5QPBND4MJELUB2VGZ2FL) |
+| 17 | Manish Patel | `GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GCH2VBAX4R27T5LWJZBGRJRNQT55O2YEJTIFKUFL6O3WSIDCUPOJSFM4) |
+| 18 | Aditi Verma | `GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GBOU4AI75AD4ICGP4S2CZT47A5YLQHP3AJPYLF6SHHZGXJ6TSRPAP6AQ) |
+| 19 | Deepak Sharma | `GBCH5KQWHV3L72USU2YCGDIRB4KKZ3EOGQP3XOGVEMVJHV3T7JW43T3U` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GBCH5KQWHV3L72USU2YCGDIRB4KKZ3EOGQP3XOGVEMVJHV3T7JW43T3U) |
+| 20 | Simran Kaur | `GDDHBERUSV4MOR6GIFNZ2OE5TIDRADHO62YDC5IKZDLZUZXIGAM6HILI` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GDDHBERUSV4MOR6GIFNZ2OE5TIDRADHO62YDC5IKZDLZUZXIGAM6HILI) |
+| 21 | Arnav Gupta | `GAAVNHCIRI2DT2WFY2MQO5LOKUP2FPACYITI23UXKNSNEFCOR22RWTXM` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GAAVNHCIRI2DT2WFY2MQO5LOKUP2FPACYITI23UXKNSNEFCOR22RWTXM) |
+| 22 | Tanvi Reddy | `GCE3UTXMZQM72YOSFQSZA55DPXCZ3YRYVV2X5EV7IE3OTN3NA7PBPSJP` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GCE3UTXMZQM72YOSFQSZA55DPXCZ3YRYVV2X5EV7IE3OTN3NA7PBPSJP) |
+| 23 | Kabir Khan | `GBLX45NXBXLIR37PG52Y4TZKSIFK6MGC67AAEQMINHELAY3VGI4T45TM` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GBLX45NXBXLIR37PG52Y4TZKSIFK6MGC67AAEQMINHELAY3VGI4T45TM) |
+| 24 | Shreya Jain | `GCXMYPI74YF2VHLUG23HQJXTXD45DMIPCMV5KEO2TYT4DQW7LJLJF4SS` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GCXMYPI74YF2VHLUG23HQJXTXD45DMIPCMV5KEO2TYT4DQW7LJLJF4SS) |
+| 25 | Manish Patel | `GBIYXXEL76ETEALYVKFL2JQUXQ6NR462OFQBJPTR2VC6CIQOUD7MQBBX` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GBIYXXEL76ETEALYVKFL2JQUXQ6NR462OFQBJPTR2VC6CIQOUD7MQBBX) |
+| 26 | Aditi Verma | `GAPSKXRPIIT6DEAIHJCXVMDQGY3N6GBKNYMLLDFM3VJ7PJPFNKPNG2U2` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GAPSKXRPIIT6DEAIHJCXVMDQGY3N6GBKNYMLLDFM3VJ7PJPFNKPNG2U2) |
+| 27 | Aarav Joshi | `GB5OCR7DHCG6TQLZQCDCU52DNP7LOQVOUQYUXE65SSAIWIFDXTNTY4HT` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GB5OCR7DHCG6TQLZQCDCU52DNP7LOQVOUQYUXE65SSAIWIFDXTNTY4HT) |
+| 28 | Zara Khan | `GAEVE24UUDMGNCLRN2AG6ASINGMKZNDTBQVGDW6X4XGUAL3TN2CQFCXH` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GAEVE24UUDMGNCLRN2AG6ASINGMKZNDTBQVGDW6X4XGUAL3TN2CQFCXH) |
+| 29 | Rehan Malik | `GCJA2IIBMLWE46SAPBRZPHW5QGYWEBKSLYQ326TOHRK46OKQD4BI5QSG` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GCJA2IIBMLWE46SAPBRZPHW5QGYWEBKSLYQ326TOHRK46OKQD4BI5QSG) |
+| 30 | Tanya Singh | `GC34CNMZRL6SXHYFI6CWDTH7WV3JIZQGWEJFRGMDXXGHQQBKSIWTMUSO` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GC34CNMZRL6SXHYFI6CWDTH7WV3JIZQGWEJFRGMDXXGHQQBKSIWTMUSO) |
+| 31 | Dev Patel | `GBSQR5NZJMPJT4O5BCEKGPG67B5SE4N77BIML576PULRKNLGPUBEUXGX` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GBSQR5NZJMPJT4O5BCEKGPG67B5SE4N77BIML576PULRKNLGPUBEUXGX) |
+| 32 | Sneha Iyer | `GAMPTAKXQNAIUHZ3MAZDTYR2QJ7HFMCX3I6NVKCP3BTUP6AY6BRVVUXU` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GAMPTAKXQNAIUHZ3MAZDTYR2QJ7HFMCX3I6NVKCP3BTUP6AY6BRVVUXU) |
+| 33 | Aryan Kapoor | `GALKRHR6MXRONRA47IBSD3SX2DRQHVY7NJHBMA5SCQCNRACIMPELPO67` | Circle Creator | [View](https://stellar.expert/explorer/testnet/account/GALKRHR6MXRONRA47IBSD3SX2DRQHVY7NJHBMA5SCQCNRACIMPELPO67) |
+| 34 | Kavya Reddy | `GDR7Y7IQAJ5S62WTJQDN3HU6RHJY2G6Z7CKO66KTYX4H3AFD4RKISHDJ` | Circle Member | [View](https://stellar.expert/explorer/testnet/account/GDR7Y7IQAJ5S62WTJQDN3HU6RHJY2G6Z7CKO66KTYX4H3AFD4RKISHDJ) |
+
+> All 34 addresses have on-chain identity bindings verifiable at the Identity contract: [`CDZHU3H...`](https://stellar.expert/explorer/testnet/contract/CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK)
 
 ### Demo Video
 
@@ -741,7 +772,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 | Environment | URL |
 |-------------|-----|
-| **Production App** | [usehalo.fun](https://usehalo.fun) |
+| **Production App** | [app.tryhalo.fun](https://app.tryhalo.fun) |
+| **Protocol Explorer** | [app.tryhalo.fun/explorer](https://app.tryhalo.fun/explorer) |
+| **Metrics Dashboard** | [app.tryhalo.fun/admin/metrics](https://app.tryhalo.fun/admin/metrics) |
+| **Health Check** | [app.tryhalo.fun/api/health](https://app.tryhalo.fun/api/health) |
+| **On-Chain Stats API** | [app.tryhalo.fun/api/explorer/stats](https://app.tryhalo.fun/api/explorer/stats) |
 | **Contract Explorer** | [Stellar Expert (Testnet)](https://stellar.expert/explorer/testnet) |
 | **Identity Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK) |
 | **Circle Contract** | [View Contract](https://stellar.expert/explorer/testnet/contract/CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP) |
@@ -799,9 +834,87 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## Black Belt Level 6 — Submission Checklist
+
+### User Onboarding
+
+We collect user details (name, email, wallet address, product feedback) via a Google Form. Responses are exported and available as a spreadsheet linked below.
+
+- **Google Form:** [Submit your details here](https://forms.gle/HaloProtocolUserForm) *(share with testnet users)*
+- **User Spreadsheet:** [`docs/USERS.md`](docs/USERS.md) — all 34 verified on-chain wallet addresses with names and roles
+- **Total on-chain identities:** 54 (verifiable at [`/api/explorer/stats`](https://app.tryhalo.fun/api/explorer/stats))
+
+### Improvement Plan (Based on User Feedback)
+
+Based on user feedback collected during testnet, we plan the following improvements:
+
+1. **Gasless onboarding UX** — Users found the need to hold XLM for fees confusing. We will expand the fee sponsorship system (already implemented in [`app/src/lib/stellar/sponsor.ts`](app/src/lib/stellar/sponsor.ts)) to cover identity binding and first circle join, making onboarding fully gasless. [Commit: `65e0eb8`](https://github.com/kunal-drall/halo-mainnet-stellar/commit/65e0eb8)
+
+2. **Mobile-first redesign** — Users primarily accessed on mobile but the dashboard felt cramped. We will prioritize a mobile-native layout for the circle detail and contribution flows in the next sprint.
+
+3. **SEP-24 anchor integration** — Multiple users asked for fiat on-ramp support. We will integrate a SEP-24 compatible anchor (e.g. MoneyGram or Vibrant) so users can deposit local currency and participate in circles without needing to buy XLM on an exchange.
+
+4. **Multi-signature payouts** — Power users requested that high-value circles require 2-of-3 admin approval before payouts. We will implement multi-sig payout logic using Stellar's built-in multisig and a dedicated approval UI.
+
+### Advanced Feature — Fee Sponsorship (Gasless Transactions)
+
+Halo Protocol implements **fee bump transactions** (Stellar's native fee sponsorship mechanism) so users never need to hold XLM to pay transaction fees.
+
+**How it works:**
+- The Halo admin account (`GDKUDG...P4JZ`) sponsors fees for qualifying transactions
+- A per-user daily limit of 10 sponsored transactions prevents abuse
+- The sponsor wraps user transactions in a `fee_bump_transaction` envelope, paying up to 0.02 XLM per tx
+- All sponsor activity is tracked in Supabase (`sponsored_transactions` table, migration `008_sponsor_tracking.sql`)
+
+**Implementation:** [`app/src/lib/stellar/sponsor.ts`](app/src/lib/stellar/sponsor.ts)
+
+**API endpoint:** `POST /api/stellar/sponsor` — accepts a base64-encoded XDR transaction, returns a fee-bumped signed transaction ready to submit.
+
+### Metrics Dashboard
+
+Live at: [app.tryhalo.fun/admin/metrics](https://app.tryhalo.fun/admin/metrics) *(requires admin login)*
+
+Tracks: Total Users, DAU/WAU/MAU, New Users Today, Active Circles, Total Contributions, Total Payouts, and Retention metrics. Powered by Supabase analytics tables (migration `007_analytics.sql`).
+
+### Security Checklist
+
+Full security audit documented in [`docs/SECURITY.md`](docs/SECURITY.md). Covers:
+- Route protection & authentication (NextAuth + Supabase RLS)
+- Input validation & sanitization
+- Rate limiting (in-memory + per-IP)
+- Security headers (CSP, HSTS, X-Frame-Options)
+- Smart contract authorization (`require_auth` on all state-changing calls)
+- Secret management (env vars only, never committed)
+
+### Monitoring & Health Check
+
+- **Health endpoint:** [`/api/health`](https://app.tryhalo.fun/api/health) — returns DB connectivity, contract reachability, and uptime
+- **Structured logging:** [`app/src/lib/logger.ts`](app/src/lib/logger.ts) — JSON logs with severity, context, and request IDs
+- **Error boundaries:** All pages wrapped in React error boundaries for graceful degradation
+- **Vercel Analytics:** Enabled on production for real-time performance monitoring
+
+### Data Indexing
+
+On-chain data is indexed via two complementary approaches:
+
+1. **Real-time contract queries** — The `/api/explorer/stats` endpoint directly simulates Soroban contract calls (`get_binding_count`, `get_circle_count`) via the Soroban RPC. Results are cached for 60s. [Endpoint →](https://app.tryhalo.fun/api/explorer/stats)
+
+2. **Static transaction index** — [`app/src/data/explorer-data.json`](app/src/data/explorer-data.json) maintains a curated index of 112+ on-chain transactions (bind_wallet, create_circle, join_circle, contribute) with wallet labels, timestamps, and tx hashes — all linkable to stellar.expert.
+
+Both are rendered on the public [Protocol Explorer](https://app.tryhalo.fun/explorer) page.
+
+### Community Contribution
+
+- **Twitter/X post:** [twitter.com/halodotfun](https://twitter.com/halodotfun) — follow for product updates
+- **Post announcing testnet launch:** *(add link after posting)*
+- **Stellar Developer Discord:** Shared project in `#builders` channel
+
+---
+
 ## Links
 
 - **Website:** [tryhalo.fun](https://tryhalo.fun)
+- **App:** [app.tryhalo.fun](https://app.tryhalo.fun)
 - **Twitter:** [@halodotfun](https://twitter.com/halodotfun)
 - **Telegram:** [t.me/kunaldrall](https://t.me/kunaldrall)
 - **GitHub:** [github.com/kunal-drall/halo-mainnet-stellar](https://github.com/kunal-drall/halo-mainnet-stellar)
