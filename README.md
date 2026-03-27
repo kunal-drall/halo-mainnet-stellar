@@ -906,7 +906,7 @@ Both are rendered on the public [Protocol Explorer](https://app.tryhalo.fun/expl
 ### Community Contribution
 
 - **Twitter/X post:** [twitter.com/halodotfun](https://twitter.com/halodotfun) — follow for product updates
-- **Post announcing testnet launch:** *(add link after posting)*
+- **Post announcing testnet launch:** [View on X/Twitter](https://x.com/halodotfun/status/2037562228401193398)
 - **Stellar Developer Discord:** Shared project in `#builders` channel
 
 ---
