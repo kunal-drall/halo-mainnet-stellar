@@ -28,6 +28,9 @@ Cargo.lock
 scripts/wallets/
 scripts/demo-workflow.ts
 app/scripts/
+app/app/
+app/src/wallets/
+app/src/demo-workflow-*.ts
 
 # Supabase local
 app/supabase/.temp/
