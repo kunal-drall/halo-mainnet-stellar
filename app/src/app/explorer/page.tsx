@@ -3,8 +3,7 @@ import { AnimatedCounter } from "./components/animated-counter";
 import { AddressDisplay } from "./components/address-display";
 import { TransactionTimeline } from "./components/transaction-timeline";
 import { ContractTable } from "./components/contract-table";
-import { simulateContractCall, CONTRACT_ADDRESSES } from "@/lib/stellar/client";
-import { scValToNative } from "@stellar/stellar-sdk";
+import explorerData from "@/data/explorer-data.json";
 
 export const metadata = {
   title: "Protocol Explorer | Halo Protocol",
@@ -12,65 +11,19 @@ export const metadata = {
     "Real-time on-chain activity explorer for the Halo Protocol on Stellar testnet.",
 };
 
-interface ExplorerData {
-  contracts?: { name: string; address: string; description: string }[];
-  wallets?: {
-    address: string;
-    role: string;
-    label: string;
-  }[];
-  transactions?: {
-    hash: string;
-    type: string;
-    wallet: string;
-    timestamp: string;
-    details: string;
-  }[];
-}
-
-function getExplorerData(): ExplorerData {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const raw = require("@/data/explorer-data.json");
-
-    let contracts: ExplorerData["contracts"];
-    if (raw.contracts && !Array.isArray(raw.contracts)) {
-      contracts = Object.values(raw.contracts) as ExplorerData["contracts"];
-    } else {
-      contracts = raw.contracts;
-    }
-
-    return {
-      contracts,
-      wallets: raw.wallets || [],
-      transactions: raw.transactions || [],
-    };
-  } catch {
-    return {};
-  }
-}
-
 // Force dynamic rendering so stats are always fresh
 export const dynamic = "force-dynamic";
 
-function toNum(result: unknown): number {
-  if (!result) return 0;
-  try {
-    return Number(scValToNative(result as Parameters<typeof scValToNative>[0]));
-  } catch {
-    return 0;
-  }
-}
-
 async function fetchStats() {
   try {
-    const [bindingResult, circleResult] = await Promise.all([
-      simulateContractCall(CONTRACT_ADDRESSES.identity, "get_binding_count", []),
-      simulateContractCall(CONTRACT_ADDRESSES.circle, "get_circle_count", []),
-    ]);
+    const res = await fetch("https://app.tryhalo.fun/api/explorer/stats", {
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
     return {
-      binding_count: toNum(bindingResult),
-      circle_count: toNum(circleResult),
+      binding_count: (data.binding_count as number) ?? 0,
+      circle_count: (data.circle_count as number) ?? 0,
     };
   } catch (error) {
     console.error("Failed to fetch explorer stats:", error);
@@ -78,48 +31,16 @@ async function fetchStats() {
   }
 }
 
-const fallbackContracts = [
-  {
-    name: "Identity Registry",
-    address: "CDZHU3HDAARGX3R3SH235IFQGA5CTXTMYQTPCQD3ASRONXCADA2P7HOK",
-    description: "Binds Stellar wallets to verified identities",
-  },
-  {
-    name: "Credit Score Engine",
-    address: "CBBJHJQJQOAZJPQK6QNDA5UKEI5K73UZQJPV5A6QCWI5KMTY6ZXCYZW3",
-    description: "Computes on-chain credit scores from circle activity",
-  },
-  {
-    name: "Circle Manager",
-    address: "CA2QSALSVD4OI6IO34G7MTRK356UR6SQYH52EZKJF5RGCPDRY34GRJJP",
-    description: "Manages lending circle lifecycle and payouts",
-  },
-];
+// Derive contracts array from the JSON (it's stored as an object keyed by name)
+const contractsList = Array.isArray(explorerData.contracts)
+  ? explorerData.contracts
+  : Object.values(explorerData.contracts as Record<string, { name: string; address: string; description: string }>);
 
-const fallbackTransactions: ExplorerData["transactions"] = [
-  {
-    hash: "a1b2c3d4e5f6",
-    type: "create_circle",
-    wallet: "GDKU...P4JZ",
-    timestamp: "2026-02-27T10:00:00Z",
-    details: "Created lending circle HaloDemo",
-  },
-  {
-    hash: "f6e5d4c3b2a1",
-    type: "bind_wallet",
-    wallet: "GDKU...P4JZ",
-    timestamp: "2026-02-27T09:30:00Z",
-    details: "Bound identity for Demo User 1",
-  },
-];
+const wallets = explorerData.wallets as { address: string; role: string; label: string }[];
+const transactions = explorerData.transactions as { hash: string; type: string; wallet: string; timestamp: string; details: string }[];
 
 export default async function ExplorerPage() {
-  const explorerData = getExplorerData();
   const stats = await fetchStats();
-
-  const contractsList = explorerData.contracts || fallbackContracts;
-  const wallets = explorerData.wallets || [];
-  const transactions = (explorerData.transactions || fallbackTransactions) as NonNullable<ExplorerData["transactions"]>;
 
   return (
     <div className="min-h-screen bg-[#0B0F1A] dot-grid">
